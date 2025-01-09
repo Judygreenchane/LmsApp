@@ -17,7 +17,30 @@ public class Program
 
         // Add services to the container.
         builder.Services.AddDbContext<LmsContext>(options =>
-            options.UseSqlServer(builder.Configuration.GetConnectionString("LmsContext") ?? throw new InvalidOperationException("Connection string 'CompaniesContext' not found.")));
+            options.UseSqlServer(builder.Configuration.GetConnectionString("LmsContext") ??
+                throw new InvalidOperationException("Connection string 'LmsContext' not found."),
+                sqlServerOptionsAction: sqlOptions =>
+                {
+                    sqlOptions.EnableRetryOnFailure(
+                        maxRetryCount: 5,
+                        maxRetryDelay: TimeSpan.FromSeconds(30),
+                        errorNumbersToAdd: null);
+                }));
+
+        // Add Identity
+        builder.Services.AddIdentityCore<ApplicationUser>(opt =>
+        {
+            opt.SignIn.RequireConfirmedAccount = false;
+            opt.User.RequireUniqueEmail = true;
+            opt.Password.RequireDigit = true;
+            opt.Password.RequireLowercase = true;
+            opt.Password.RequireUppercase = true;
+            opt.Password.RequireNonAlphanumeric = true;
+            opt.Password.RequiredLength = 6;
+        })
+        .AddRoles<IdentityRole>()
+        .AddEntityFrameworkStores<LmsContext>()
+        .AddDefaultTokenProviders();
 
         builder.Services.AddControllers(configure =>
         {
@@ -51,7 +74,15 @@ public class Program
         {
             app.UseSwagger();
             app.UseSwaggerUI();
-            await app.SeedDataAsync();
+            try
+            {
+                await app.SeedDataAsync();
+            }
+            catch (Exception ex)
+            {
+                var logger = app.Services.GetRequiredService<ILogger<Program>>();
+                logger.LogError(ex, "An error occurred while seeding the database.");
+            }
         }
 
         app.UseHttpsRedirection();
