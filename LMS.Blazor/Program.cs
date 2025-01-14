@@ -26,6 +26,19 @@ builder.Services.AddScoped<IdentityRedirectManager>();
 builder.Services.AddScoped<AuthenticationStateProvider,
     PersistingRevalidatingAuthenticationStateProvider>();
 
+builder.Services.AddScoped<AuthHttpService>();
+
+// Configure HttpClient
+builder.Services.AddScoped(sp =>
+{
+    var httpClient = new HttpClient
+    {
+        BaseAddress = new Uri(builder.Configuration["ApiSettings:BaseUrl"] ??
+                            "https://localhost:7044/api/")
+    };
+    return httpClient;
+});
+
 builder.Services.AddScoped<IApiService, ClientApiService>();
 
 builder.Services.AddAuthentication(options =>

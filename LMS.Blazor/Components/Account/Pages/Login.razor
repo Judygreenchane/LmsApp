@@ -1,9 +1,8 @@
 ﻿@page "/Account/Login"
-
 @using System.ComponentModel.DataAnnotations
 @using LMS.Blazor.Services
 @using LMS.Shared.DTOs
-@using LMS.Shared.User
+@using LMS.Blazor.Data
 @using Microsoft.AspNetCore.Authentication
 @using Microsoft.AspNetCore.Identity
 
@@ -11,9 +10,7 @@
 @inject ILogger<Login> Logger
 @inject NavigationManager NavigationManager
 @inject IdentityRedirectManager RedirectManager
-@inject UserManager<ApplicationUser> UserManager
-@inject IHttpClientFactory HttpClientFactory
-@inject ITokenStorage TokenStorage
+@inject AuthHttpService AuthService
 
 <PageTitle>Log in</PageTitle>
 
@@ -28,12 +25,14 @@
                 <hr />
                 <ValidationSummary class="text-danger" role="alert" />
                 <div class="form-floating mb-3">
-                    <InputText @bind-Value="Input.Email" class="form-control" autocomplete="username" aria-required="true" placeholder="name@example.com" />
+                    <InputText @bind-Value="Input.Email" class="form-control" autocomplete="username"
+                               aria-required="true" placeholder="name@example.com" />
                     <label for="email" class="form-label">Email</label>
                     <ValidationMessage For="() => Input.Email" class="text-danger" />
                 </div>
                 <div class="form-floating mb-3">
-                    <InputText type="password" @bind-Value="Input.Password" class="form-control" autocomplete="current-password" aria-required="true" placeholder="password" />
+                    <InputText type="password" @bind-Value="Input.Password" class="form-control"
+                               autocomplete="current-password" aria-required="true" placeholder="password" />
                     <label for="password" class="form-label">Password</label>
                     <ValidationMessage For="() => Input.Password" class="text-danger" />
                 </div>
@@ -51,7 +50,8 @@
                         <a href="Account/ForgotPassword">Forgot your password?</a>
                     </p>
                     <p>
-                        <a href="@(NavigationManager.GetUriWithQueryParameters("Account/Register", new Dictionary<string, object?> { ["ReturnUrl"] = ReturnUrl }))">Register as a new user</a>
+                        <a href="@(NavigationManager.GetUriWithQueryParameters("Account/Register",
+                            new Dictionary<string, object?> { ["ReturnUrl"] = ReturnUrl }))">Register as a new user</a>
                     </p>
                     <p>
                         <a href="Account/ResendEmailConfirmation">Resend email confirmation</a>
@@ -85,42 +85,27 @@
     {
         if (HttpMethods.IsGet(HttpContext.Request.Method))
         {
-            // Clear the existing external cookie to ensure a clean login process
             await HttpContext.SignOutAsync(IdentityConstants.ExternalScheme);
         }
     }
 
     public async Task LoginUser()
     {
-        // This doesn't count login failures towards account lockout
-        // To enable password failures to trigger account lockout, set lockoutOnFailure: true
+        var (success, error, tokens) = await AuthService.LoginAsync(Input.Email, Input.Password);
 
-        //ToDo: Handle login with username instead to not require geting the User from Database
-        ApplicationUser? user = await UserManager.FindByEmailAsync(Input.Email);
-        if (user == null)
+        if (!success)
         {
-            errorMessage = "Failed to login please try again.";
+            errorMessage = error;
             return;
         }
 
-        //ToDo: make service of API call to remote server (LMS.API)!
-        var tokens = await GetTokensFromApi(user.UserName!, Input.Password);
+        var result = await SignInManager.PasswordSignInAsync(Input.Email, Input.Password,
+            Input.RememberMe, lockoutOnFailure: false);
 
-        if (tokens == null)
-        {
-            errorMessage = "Failed to login please try again.";
-            return;
-        }
-
-        var result = await SignInManager.PasswordSignInAsync(user, Input.Password, Input.RememberMe, lockoutOnFailure: false);
         if (result.Succeeded)
         {
-            await TokenStorage.StoreTokensAsync(user.Id, tokens);
-
             Logger.LogInformation("User logged in.");
             RedirectManager.RedirectTo(ReturnUrl);
-
-
         }
         else if (result.RequiresTwoFactor)
         {
@@ -151,18 +136,5 @@
 
         [Display(Name = "Remember me?")]
         public bool RememberMe { get; set; }
-    }
-
-    private async Task<TokenDto?> GetTokensFromApi(string username, string password)
-    {
-        var httpClient = HttpClientFactory.CreateClient("LmsAPIClient");
-        var response = await httpClient.PostAsJsonAsync("api/auth/login", new UserForAuthDto(username, password));
-
-        if (!response.IsSuccessStatusCode)
-        {
-            return null;
-        }
-
-        return await response.Content.ReadFromJsonAsync<TokenDto>();
     }
 }

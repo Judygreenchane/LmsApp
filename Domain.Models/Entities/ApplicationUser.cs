@@ -1,33 +1,33 @@
-﻿using Microsoft.AspNetCore.Identity;
-using System.ComponentModel.DataAnnotations;
-using System.Reflection.Metadata;
+﻿
+    using Domain.Models.Entities;
+    using Microsoft.AspNetCore.Identity;
+    using System.ComponentModel.DataAnnotations;
 
 namespace Domain.Models.Entities
 {
     public class ApplicationUser : IdentityUser
     {
-        // public int Id { get; set; }
-
-        [Required(ErrorMessage = "First name is a required field.")]
-        [MaxLength(50, ErrorMessage = "Maximum length for the First Name is 50 characters.")]
-        public string FirstName { get; set; }
-
-        [Required(ErrorMessage = "Last name is a required field.")]
-        [MaxLength(50, ErrorMessage = "Maximum length for the Last Name is 50 characters.")]
-        public string LastName { get; set; }
-
-        [Required(ErrorMessage = "Email is a required field.")]
-        [EmailAddress(ErrorMessage = "Invalid email format")]
-        [MaxLength(100, ErrorMessage = "Maximum length for the Email is 100 characters.")]
-        public string Email { get; set; }
-
         public string? RefreshToken { get; set; }
-        public DateTime? RefreshTokenExpireTime { get; set; }
+        public DateTime RefreshTokenExpireTime { get; set; }
 
-        [Required(ErrorMessage = "IsActive status is required.")]
-        public bool IsActive { get; set; }
+        [Required]
+        [MaxLength(100)]
+        public string FirstName { get; set; } = string.Empty;
 
-        // Navigation Property
-        public ICollection<Course> Courses { get; set; }
+        [Required]
+        [MaxLength(100)]
+        public string LastName { get; set; } = string.Empty;
+
+        [Required]
+        [EmailAddress]
+        public override string Email { get; set; }
+
+        public string? RoleId { get; set; }
+        public IdentityRole Role { get; set; }
+
+        public int? CurrentCourseId { get; set; }
+        public Course CurrentCourse { get; set; }
+
+        public ICollection<Document> Documents { get; set; } = new List<Document>();
     }
 }
