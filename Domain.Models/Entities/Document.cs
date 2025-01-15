@@ -1,50 +1,38 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Domain.Models.Entities
 {
     public class Document
     {
         [Key]
-        public int DocumentId { get; set; }
+        public int Id { get; set; }
 
-        [Required(ErrorMessage = "Document name is a required field.")]
-        [MaxLength(100, ErrorMessage = "Maximum length for the Document Name is 100 characters.")]
-        public string Name { get; set; }
+        [Required]
+        [MaxLength(255)]
+        public string Name { get; set; } = string.Empty;
 
-        [Required(ErrorMessage = "Document type is a required field.")]
-        [MaxLength(50, ErrorMessage = "Maximum length for the Document Type is 50 characters.")]
-        public string DocumentType { get; set; }
+        public string? Description { get; set; }
 
-        [MaxLength(500, ErrorMessage = "Maximum length for the Description is 500 characters.")]
-        public string Description { get; set; }
+        [Required]
+        public DateTime UploadTime { get; set; } = DateTime.UtcNow;
 
-        [Required(ErrorMessage = "File path is a required field.")]
-        [MaxLength(255, ErrorMessage = "Maximum length for the File Path is 255 characters.")]
-        public string FilePath { get; set; }
+        // Foreign Key to User
+        [Required]
+        public string UserId { get; set; }
+        public ApplicationUser User { get; set; }
 
-        [Required(ErrorMessage = "Upload date is a required field.")]
-        public DateTime UploadedDate { get; set; }
+        // Foreign Key to Course
+        public int? CourseId { get; set; } // Nullable FK for Course
+        public Course? Course { get; set; } // Nullable navigation property
 
-        [Required(ErrorMessage = "Uploaded by user is a required field.")]
-        public string UploadedByUserId { get; set; } // Foreign Key
+        // Foreign Key to Module
+        public int? ModuleId { get; set; } // Nullable FK for Module
+        public Module? Module { get; set; } // Nullable navigation property
 
-        public int? ActivityId { get; set; }
-        public int? CourseId { get; set; }
-        public int? ModuleId { get; set; }
-
-        // Navigation Properties
-        [ForeignKey("UploadedByUserId")]
-        public ApplicationUser? UploadedByUser { get; set; } // Navigation property for User
-
-        [ForeignKey("ActivityId")]
-        public Activity? Activity { get; set; }
-
-        [ForeignKey("CourseId")]
-        public Course? Course { get; set; }
-
-        [ForeignKey("ModuleId")]
-        public Module? Module { get; set; }
+        // Foreign Key to Activity
+        public Guid? ActivityId { get; set; } // Nullable FK for Activity
+        public Activity? Activity { get; set; } // Nullable navigation property
     }
 }
