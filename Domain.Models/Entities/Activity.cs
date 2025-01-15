@@ -11,35 +11,38 @@ namespace Domain.Models.Entities
 {
     public class Activity
     {
-
         [Key]
-        public int ActivityId { get; set; }
+        public Guid Id { get; set; }
 
-        [Required(ErrorMessage = "Activity name is a required field.")]
-        [MaxLength(100, ErrorMessage = "Maximum length for the Activity Name is 100 characters.")]
+        [Required]
+        [MaxLength(50)]
+        public string Type { get; set; } // "Lecture", "Assignment"
+
+        [Required]
+        [MaxLength(255)]
         public string Name { get; set; }
 
-        [MaxLength(500, ErrorMessage = "Maximum length for the Description is 500 characters.")]
-        public string Description { get; set; }
-
-        [Required(ErrorMessage = "Activity type ID is a required field.")]
-        public int ActivityTypeId { get; set; }
-
-        [Required(ErrorMessage = "Start time is a required field.")]
+        [Required]
         public DateTime StartTime { get; set; }
 
-        [Required(ErrorMessage = "End time is a required field.")]
+        [Required]
         public DateTime EndTime { get; set; }
 
-        [Required(ErrorMessage = "Module ID is a required field.")]
-        public int ModuleId { get; set; }
+        public string Description { get; set; }
 
-        // Navigation Properties
-        [ForeignKey("ActivityTypeId")]
-        public ActivityType? ActivityType { get; set; }
-        [ForeignKey("ModuleId")]
-        public  Module Module { get; set; } = null!;
-        public ICollection<Document> Documents { get; set; }
+        [Required]
+        public int ModuleId { get; set; } 
+        public Module Module { get; set; }
 
+
+        public ICollection<Document> Documents { get; set; } = new List<Document>(); 
+
+
+        /// Validations
+
+        public bool IsValidTimeRange()
+        {
+            return EndTime > StartTime;
+        }
     }
 }
