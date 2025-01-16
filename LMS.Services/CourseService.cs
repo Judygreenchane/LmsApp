@@ -2,6 +2,7 @@
 using Domain.Contracts;
 using Domain.Models.Entities;
 using LMS.Shared.DTOs.Course;
+using Microsoft.AspNetCore.JsonPatch;
 using Services.Contracts;
 using System;
 using System.Collections.Generic;
@@ -25,7 +26,15 @@ namespace LMS.Services
             var courses = await _uow.CourseRepository.GetAllCoursesAsync();
             return _mapper.Map<IEnumerable<CourseDto>>(courses);
         }
-
+        public async Task<CourseDto> GetCourseByIdAsync(int courseId)
+        {
+            Course? course = await _uow.CourseRepository.GetCourseByIdAsync(courseId);
+            if (course == null)
+            {
+               
+            }
+            return _mapper.Map<CourseDto>(course);
+        }
         public async Task<CourseDto> CreateCourseAsync(CourseCreateDto dto)
         {
             Course course = _mapper.Map<Course>(dto);
@@ -35,6 +44,28 @@ namespace LMS.Services
             await _uow.CompleteAsync();
 
             return _mapper.Map<CourseDto>(course);
+        }
+        public async Task<CourseDto> UpdateCourseAsync(int id, JsonPatchDocument<CourseUpdateDto> patchDocument)
+        {
+            var courseToPatch = await _uow.CourseRepository.GetCourseByIdAsync(id, true);
+            if (courseToPatch == null) throw new KeyNotFoundException($"{id} not found.");
+
+            var course = _mapper.Map<CourseUpdateDto>(courseToPatch);
+            patchDocument.ApplyTo(course);
+
+            _mapper.Map(course, courseToPatch);
+            await _uow.CompleteAsync();
+
+            return _mapper.Map<CourseDto>(courseToPatch);
+        }
+
+        public async Task DeleteCourseAsync(int id)
+        {
+            var courseToDelete = await _uow.CourseRepository.GetCourseByIdAsync(id, true);
+            if (courseToDelete == null) throw new KeyNotFoundException($"{id} not found.");
+            _uow.CourseRepository.Delete(courseToDelete);
+
+            await _uow.CompleteAsync();
         }
     }
 }
