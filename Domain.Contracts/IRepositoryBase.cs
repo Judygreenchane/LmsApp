@@ -3,7 +3,7 @@
 namespace Domain.Contracts;
 
 //Use if you want
-public interface IRepositoryBase<T>
+public interface IRepositoryBase<T> where T : class
 {
     IQueryable<T> FindAll(bool trackChanges = false);
     IQueryable<T> FindByCondition(Expression<Func<T, bool>> expression, bool trackChanges = false);
