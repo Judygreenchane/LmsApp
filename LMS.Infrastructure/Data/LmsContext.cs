@@ -41,7 +41,7 @@ public class LmsContext : IdentityDbContext<ApplicationUser, IdentityRole, strin
             .HasForeignKey(m => m.CourseId)
             .OnDelete(DeleteBehavior.Cascade);
 
-        // Module-Activity Relationship (One-to-Many)
+        // Module-Activity Relationship (One-to-Many)  
         modelBuilder.Entity<Activity>()
             .HasOne(a => a.Module)
             .WithMany(m => m.Activities)
@@ -52,13 +52,13 @@ public class LmsContext : IdentityDbContext<ApplicationUser, IdentityRole, strin
         modelBuilder.Entity<Document>()
             .HasOne(d => d.User)
             .WithMany(u => u.Documents)
-            .HasForeignKey(d => d.UserId)
+            .HasForeignKey(d => d.ApplicationUserId)
             .OnDelete(DeleteBehavior.Cascade);
 
         // Document-Course Relationship (NO ACTION to avoid cascade path issues)
         modelBuilder.Entity<Document>()
             .HasOne(d => d.Course)
-            .WithMany(c => c.Documents)
+            .WithMany(c => c.Documents)  
             .HasForeignKey(d => d.CourseId)
             .OnDelete(DeleteBehavior.NoAction);
 

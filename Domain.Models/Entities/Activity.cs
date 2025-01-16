@@ -32,7 +32,7 @@ namespace Domain.Models.Entities
         public DateTime EndTime { get; set; }
 
         [Required(ErrorMessage = "Module ID is a required field.")]
-        public int ModuleId { get; set; }
+        public int? ModuleId { get; set; }
 
         // Navigation Properties
         [ForeignKey("ActivityTypeId")]

@@ -2,6 +2,7 @@
     using Domain.Models.Entities;
     using Microsoft.AspNetCore.Identity;
     using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Domain.Models.Entities
 {
@@ -22,11 +23,11 @@ namespace Domain.Models.Entities
         [EmailAddress]
         public override string Email { get; set; }
 
-        public string? RoleId { get; set; }
-        public IdentityRole Role { get; set; }
+       
 
-        public int? CurrentCourseId { get; set; }
-        public Course CurrentCourse { get; set; }
+        public int? CourseId { get; set; }
+        [ForeignKey("CourseId")]
+        public Course? Course { get; set; }
 
         public ICollection<Document> Documents { get; set; } = new List<Document>();
     }

@@ -18,9 +18,10 @@ namespace Domain.Models.Entities
         [Required]
         public DateTime UploadTime { get; set; } = DateTime.UtcNow;
 
+        public string? FilePath { get; set; }
         // Foreign Key to User
         [Required]
-        public string UserId { get; set; }
+        public string ApplicationUserId { get; set; }
         public ApplicationUser User { get; set; }
 
         // Foreign Key to Course
@@ -32,7 +33,7 @@ namespace Domain.Models.Entities
         public Module? Module { get; set; } // Nullable navigation property
 
         // Foreign Key to Activity
-        public Guid? ActivityId { get; set; } // Nullable FK for Activity
+        public int? ActivityId { get; set; } // Nullable FK for Activity
         public Activity? Activity { get; set; } // Nullable navigation property
     }
 }
