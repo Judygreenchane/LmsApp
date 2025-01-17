@@ -1,10 +1,11 @@
-﻿using System.Collections.Generic;
+﻿using Domain.Models.Entities;
+using System.Collections.Generic;
 using System.Linq.Expressions;
 
 namespace Domain.Contracts;
 
 //Use if you want
-public interface IRepositoryBase<T> where T : class
+public interface IRepositoryBase<T> where T : BaseEntity
 {
     IQueryable<T> FindAll(bool trackChanges = false);
     IQueryable<T> FindByCondition(Expression<Func<T, bool>> expression, bool trackChanges = false);
