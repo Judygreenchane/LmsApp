@@ -16,10 +16,12 @@ namespace LMS.Infrastructure.Repositories
         {
         }
 
-        public IQueryable<Module> FindAll(bool includeActivities = false, bool trackChanges = false)
+        public IQueryable<Module> FindAll(bool includeActivities = false, bool includeDocuments = false, bool trackChanges = false)
         {
-            if (!includeActivities) return base.FindAll(trackChanges);
-            return base.FindAll(trackChanges).Include(m => m.Activities);
+            if (includeActivities && includeDocuments) return base.FindAll(trackChanges).Include(m => m.Activities).Include(m => m.Documents);
+            if(includeActivities)return base.FindAll(trackChanges).Include(m => m.Activities);
+            if(includeDocuments)return base.FindAll(trackChanges).Include(m => m.Documents);
+            return base.FindAll(trackChanges);
         }
 
     }

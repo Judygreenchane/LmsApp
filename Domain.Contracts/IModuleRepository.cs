@@ -4,6 +4,6 @@ namespace Domain.Contracts
 {
     public interface IModuleRepository : IRepositoryBase<Module>
     {
-        IQueryable<Module> FindAll(bool includeActivities = false, bool trackChanges = false);
+        IQueryable<Module> FindAll(bool includeActivities = false, bool includeDocuments = false, bool trackChanges = false);
     }
 }

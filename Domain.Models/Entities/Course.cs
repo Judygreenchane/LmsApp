@@ -9,14 +9,11 @@ using System.Threading.Tasks;
 
 namespace Domain.Models.Entities
 {
-    public class Course
+    public class Course : BaseEntity
     {
-        [Key]
-        public int CourseId { get; set; }
-
         [Required(ErrorMessage = "Course name is a required field.")]
         [MaxLength(100, ErrorMessage = "Maximum length for the Course Name is 100 characters.")]
-        public string Name { get; set; }
+        public override string Name { get; set; }
 
         [MaxLength(500, ErrorMessage = "Maximum length for the Description is 500 characters.")]
         public string Description { get; set; }

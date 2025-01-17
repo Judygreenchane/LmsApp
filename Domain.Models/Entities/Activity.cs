@@ -9,15 +9,11 @@ using System.Threading.Tasks;
 
 namespace Domain.Models.Entities
 {
-    public class Activity
+    public class Activity : BaseEntity
     {
-
-        [Key]
-        public int ActivityId { get; set; }
-
         [Required(ErrorMessage = "Activity name is a required field.")]
         [MaxLength(100, ErrorMessage = "Maximum length for the Activity Name is 100 characters.")]
-        public string Name { get; set; }
+        public override string Name { get; set; }
 
         [MaxLength(500, ErrorMessage = "Maximum length for the Description is 500 characters.")]
         public string Description { get; set; }
