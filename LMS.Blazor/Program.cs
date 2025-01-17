@@ -4,6 +4,7 @@ using LMS.Blazor.Components.Account;
 using LMS.Blazor.Data;
 using LMS.Blazor.Services;
 using LMS.Shared.User;
+
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -65,12 +66,16 @@ builder.Services.AddIdentityCore<ApplicationUser>(options =>
 
 builder.Services.AddSingleton<IEmailSender<ApplicationUser>, IdentityNoOpEmailSender>();
 
+// Configure HttpClient for API
 builder.Services.AddHttpClient("LmsAPIClient", cfg =>
-     {
-         cfg.BaseAddress = new Uri(
-            builder.Configuration["LmsAPIBaseAddress"] ??
-                throw new Exception("LmsAPIBaseAddress is missing."));
-     });
+{
+    cfg.BaseAddress = new Uri(
+        builder.Configuration["LmsAPIBaseAddress"] ??
+            throw new Exception("LmsAPIBaseAddress is missing."));
+});
+
+// Add Auth Services
+builder.Services.AddScoped<AuthHttpService>();
 
 builder.Services.Configure<PasswordHasherOptions>(options => options.IterationCount = 10000);
 
