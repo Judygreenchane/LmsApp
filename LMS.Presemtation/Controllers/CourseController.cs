@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using Domain.Models.Entities;
 using LMS.Shared.DTOs.Course;
 using Services.Contracts;
+using Microsoft.AspNetCore.JsonPatch;
 
 namespace LMS.Presemtation.Controllers
 {
@@ -20,7 +21,12 @@ namespace LMS.Presemtation.Controllers
         {
             _serviceManager = serviceManager;
         }
-
+        [HttpGet("{id}")]
+        public async Task<ActionResult<CourseDto>> GetOneCourse(int id)
+        {
+            var courseDto = await _serviceManager.CourseService.GetCourseByIdAsync(id);
+            return Ok(courseDto);
+        }
         [HttpGet]
         public async Task<ActionResult<IEnumerable<CourseDto>>> GetAllCourses()
         {
@@ -32,6 +38,26 @@ namespace LMS.Presemtation.Controllers
         {
             var createdCourseDto = await _serviceManager.CourseService.CreateCourseAsync(dto);
             return Created();
+        }
+        [HttpPatch("{id}")]
+        public async Task<ActionResult> PatchCourse(int id, JsonPatchDocument<CourseUpdateDto> patchDocument)
+        {
+            if (patchDocument is null) return BadRequest();
+
+            var courseToPatch = new CourseUpdateDto();
+            patchDocument.ApplyTo(courseToPatch, ModelState);
+
+            if (!ModelState.IsValid) return UnprocessableEntity(ModelState);
+
+            var changedCourse = await _serviceManager.CourseService.UpdateCourseAsync(id, patchDocument);
+
+            return Ok(changedCourse);
+        }
+        [HttpDelete("{id}")]
+        public async Task<ActionResult> DeleteCourse(int id)
+        {
+            await _serviceManager.CourseService.DeleteCourseAsync(id);
+            return NoContent();
         }
 
     }

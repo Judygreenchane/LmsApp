@@ -18,5 +18,12 @@ namespace LMS.Infrastructure.Repositories
         {
            return await FindAll(trackChanges).ToListAsync();
         }
+        public async Task<Course?> GetCourseByIdAsync(int courseId, bool trackChanges = false)
+        {
+            return await
+                FindByCondition(c => c.CourseId.Equals(courseId), trackChanges)
+                
+                .FirstOrDefaultAsync();
+        }
     }
 }

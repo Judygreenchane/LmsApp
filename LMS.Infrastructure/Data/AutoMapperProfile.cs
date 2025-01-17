@@ -13,5 +13,6 @@ public class AutoMapperProfile : Profile
         CreateMap<UserForRegistrationDto, ApplicationUser>();
         CreateMap<CourseDto, Course>().ReverseMap();
         CreateMap<CourseCreateDto, Course>().ReverseMap();
+        CreateMap<CourseUpdateDto, Course>().ReverseMap();
     }
   }

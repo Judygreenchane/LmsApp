@@ -7,9 +7,12 @@ using System.Threading.Tasks;
 
 namespace Domain.Contracts
 {
-    public  interface ICourseRepository : IRepositoryBase<Course>
+    public  interface ICourseRepository 
     {
         Task<List<Course>> GetAllCoursesAsync(bool trackChanges = false);
         void Create(Course entity);
+        Task<Course?> GetCourseByIdAsync(int courseId, bool trackChanges = false);
+        void Update(Course entity);
+        void Delete(Course entity);
     }
 }
