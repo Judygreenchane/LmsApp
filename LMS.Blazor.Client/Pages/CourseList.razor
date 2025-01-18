@@ -1,0 +1,50 @@
+﻿@page "/courselist"
+@using System.ComponentModel.DataAnnotations
+@using System.Text
+@using System.Text.Encodings.Web
+@using LMS.Shared.DTOs.Course
+@using LMS.Shared.User
+@using LMS.Shared.DTOs
+@using Microsoft.AspNetCore.Identity
+
+@inject UserManager<ApplicationUser> UserManager
+@inject IUserStore<ApplicationUser> UserStore
+
+@inject IHttpClientFactory HttpClientFactory
+<h3>CourseList</h3>
+@if (courses == null)
+{
+    <p>Loading courses...</p>
+}
+else if (courses.Count == 0)
+{
+    <p>No courses available.</p>
+}
+else
+{
+    <ul>
+        @foreach (var course in courses)
+        {
+            <li>@course.Name</li>
+        }
+    </ul>
+}
+
+@code {
+
+    private List<CourseDto>? courses { get; set; } = new();
+
+    [SupplyParameterFromQuery]
+    private string? ReturnUrl { get; set; }
+
+    private string? successMessage;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var httpClient = HttpClientFactory.CreateClient("LmsAPIClient");
+        courses = await httpClient.GetFromJsonAsync<List<CourseDto>>("api/Course/courselist");
+           
+
+       
+    }
+}
