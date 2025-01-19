@@ -27,7 +27,7 @@ namespace Domain.Models.Entities
         public DateTime EndDate { get; set; }
 
         [Required(ErrorMessage = "Course ID is a required field.")]
-        public int CourseId { get; set; }
+        public int? CourseId { get; set; }
 
         // Navigation Properties
         [ForeignKey("CourseId")]
