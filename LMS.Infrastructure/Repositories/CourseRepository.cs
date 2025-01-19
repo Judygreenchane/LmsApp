@@ -14,16 +14,15 @@ namespace LMS.Infrastructure.Repositories
         public CourseRepository(LmsContext context) : base(context)
         {
         }
-        public async Task<List<Course>> GetAllCoursesAsync(bool trackChanges = false)
+        public IQueryable<Course> FindAll(bool includeModules = false, bool includeDocuments = false, bool trackChanges = false)
         {
-           return await FindAll(trackChanges).ToListAsync();
-        }
-        public async Task<Course?> GetCourseByIdAsync(int courseId, bool trackChanges = false)
-        {
-            return await
-                FindByCondition(c => c.CourseId.Equals(courseId), trackChanges)
-                
-                .FirstOrDefaultAsync();
+            if (includeModules && includeDocuments) return base.FindAll(trackChanges).Include(m => m.Modules).Include(m => m.Documents);
+
+            if (includeModules) return base.FindAll(trackChanges).Include(m => m.Modules);
+
+            if (includeDocuments) return base.FindAll(trackChanges).Include(m => m.Documents);
+
+            return base.FindAll(trackChanges);
         }
     }
 }
