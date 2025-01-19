@@ -1,50 +1,66 @@
 ﻿@page "/courselist"
-@using System.ComponentModel.DataAnnotations
-@using System.Text
-@using System.Text.Encodings.Web
-@using LMS.Shared.DTOs.Course
-@using LMS.Shared.User
+@rendermode InteractiveWebAssembly
+
+@using LMS.Blazor.Client.Services
 @using LMS.Shared.DTOs
-@using Microsoft.AspNetCore.Identity
-
-@inject UserManager<ApplicationUser> UserManager
-@inject IUserStore<ApplicationUser> UserStore
-
-@inject IHttpClientFactory HttpClientFactory
+@using LMS.Shared.DTOs.Course
 <h3>CourseList</h3>
+
 @if (courses == null)
 {
-    <p>Loading courses...</p>
-}
-else if (courses.Count == 0)
-{
-    <p>No courses available.</p>
+    <p>API not called yet</p>
 }
 else
 {
-    <ul>
-        @foreach (var course in courses)
-        {
-            <li>@course.Name</li>
-        }
-    </ul>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Name</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in courses)
+            {
+                <tr>
+                    <td>@item.Name</td>
+                </tr>
+            }
+        </tbody>
+    </table>
 }
-
 @code {
 
-    private List<CourseDto>? courses { get; set; } = new();
+    [Inject]
+    private IApiService _apiService { get; set; } = default!;
 
-    [SupplyParameterFromQuery]
-    private string? ReturnUrl { get; set; }
+    // private AuthenticationStateProvider AuthenticationStateProvider { get; set; } = default!;
 
-    private string? successMessage;
+    private List<CourseDto>? courses;
 
-    protected override async Task OnInitializedAsync()
+
+    protected async override Task OnAfterRenderAsync(bool firstRender)
     {
-        var httpClient = HttpClientFactory.CreateClient("LmsAPIClient");
-        courses = await httpClient.GetFromJsonAsync<List<CourseDto>>("api/Course/courselist");
-           
 
-       
+        if (firstRender)
+        {
+            try
+            {
+                if (_apiService != null)
+                {
+                    courses = (await _apiService.CallApiAsync<IEnumerable<CourseDto>>("AllCourse"))?.ToList() ?? [];
+                    StateHasChanged(); // Trigger UI update after fetching data
+                }
+                else
+                {
+                    Console.WriteLine("ApiService is not initialized");
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error while fetching courses: {ex.Message}");
+            }
+        }
+
+
     }
 }
