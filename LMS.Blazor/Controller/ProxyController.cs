@@ -30,7 +30,7 @@ public class ProxyController : ControllerBase
     {
         // string endpoint = "api/demoauth";
         string endpoint = $"api/{request}";
-        if (request == "aaaaa")
+        if (request == "AllCourse")
         {
             endpoint = "api/Course/courselist";
         }
