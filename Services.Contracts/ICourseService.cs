@@ -7,7 +7,7 @@ namespace Services.Contracts
     {
         Task<CourseDto> CreateCourseAsync(CourseCreateDto dto);
         Task DeleteCourseAsync(int id);
-        IEnumerable<CourseDto> GetAllCourses();
+        IEnumerable<CourseDto> GetAllCourses(bool includeModules = false, bool includeDocuments = false, bool trackChanges = false);
         Task<CourseDto> GetCourseByIdAsync(int courseId);
         Task<CourseDto> UpdateCourseAsync(int id, JsonPatchDocument<CourseUpdateDto> patchDocument);
     }

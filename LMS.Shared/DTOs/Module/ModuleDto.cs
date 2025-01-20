@@ -5,9 +5,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace LMS.Shared.DTOs.Course
+namespace LMS.Shared.DTOs.Module
 {
-    public record CourseDto : BaseDto
+    public record ModuleDto : BaseDto
     {
         public string Description { get; set; }
         public DateTime StartDate { get; set; }

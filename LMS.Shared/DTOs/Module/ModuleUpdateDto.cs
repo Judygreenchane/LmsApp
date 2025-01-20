@@ -6,9 +6,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace LMS.Shared.DTOs.Course
+namespace LMS.Shared.DTOs.Module
 {
-    public  record CourseCreateDto : BaseCreateDto
+    public record ModuleUpdateDto : BaseUpdateDto
     {
         [Required]
         public string Description { get; init; }
@@ -18,7 +18,5 @@ namespace LMS.Shared.DTOs.Course
 
         [Required]
         public DateTime EndDate { get; init; }
-
-       // public List<ModuleCreateDto> Modules { get; init; }
     }
 }

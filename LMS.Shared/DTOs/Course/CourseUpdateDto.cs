@@ -1,4 +1,5 @@
-﻿using System;
+﻿using LMS.Shared.DTOs.BaseDtos;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -7,11 +8,8 @@ using System.Threading.Tasks;
 
 namespace LMS.Shared.DTOs.Course
 {
-    public  record CourseUpdateDto
+    public record CourseUpdateDto : BaseUpdateDto
     {
-        [Required]
-        public string Name { get; init; }
-
         [Required]
         public string Description { get; init; }
 
