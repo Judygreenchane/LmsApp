@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace LMS.Shared.User
+namespace LMS.Shared.DTOs
 {
     public class RegisterDto
     {
