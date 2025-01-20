@@ -30,10 +30,15 @@ public class ProxyController : ControllerBase
     {
         // string endpoint = "api/demoauth";
         string endpoint = $"api/{request}";
-        if (request == "AllCourse")
-        {
-            endpoint = "api/Course/courselist";
-        }
+        //if (request == "AllCourse")
+        //{
+        //    endpoint = "api/Course/courselist";
+        //}
+        //if (request == "SelectedCourse")
+        //{
+        //    endpoint = "api/Course/4";
+        //}
+        endpoint =  request;
         // var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 
         // if (userId == null)
