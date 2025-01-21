@@ -19,9 +19,7 @@ namespace Domain.Models.Entities
         [MaxLength(100)]
         public string LastName { get; set; } = string.Empty;
 
-        [Required]
-        [EmailAddress]
-        public override string Email { get; set; }
+        
 
        
 
