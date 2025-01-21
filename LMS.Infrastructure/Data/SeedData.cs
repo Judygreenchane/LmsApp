@@ -72,6 +72,18 @@ namespace LMS.Infrastructure.Data
                         await CreateAdminUserAsync();
                     }
 
+                    if (!context.ActivityTypes.Any())
+                    {
+                        // Generate ActivityTypes
+                        await GenerateActivitiesTypes(5);
+                    }
+
+                    if (!context.Courses.Any())
+                    {
+                        //Create a Course
+                        await CreateCourseAsync();
+                    }
+
                     if (!teacherExists)
                     {
                         // Generate teachers
@@ -85,17 +97,7 @@ namespace LMS.Infrastructure.Data
                     }
 
 
-                    if (!context.ActivityTypes.Any())
-                    {
-                        // Generate ActivityTypes
-                        await GenerateActivitiesTypesAsync(5);
-                    }
 
-                    if (!context.Courses.Any())
-                    {
-                        //Create a Course
-                        await CreateCourseAsync();
-                    }
 
                     // Save changes
                     await context.SaveChangesAsync();
@@ -171,6 +173,12 @@ namespace LMS.Infrastructure.Data
                     {
                         await userManager.AddToRoleAsync(user, role);
                     }
+                    if (role == studentRole)
+                    {
+                        var random = new Random();
+                        List<Course> courses = await context.Courses.ToListAsync();
+                        user.Course = courses[random.Next(0, courses.Count)];
+                    }
                 }
             }
         }
@@ -189,8 +197,8 @@ namespace LMS.Infrastructure.Data
                 Modules = await GenerateModulesAsync(3, startDate, endDate),
                 Documents = await GenerateDocumentsAsync(3)
             };
-            await context.Courses.AddAsync(course);
-
+            context.Courses.Add(course);
+            await context.SaveChangesAsync();
         }
         private static async Task<ICollection<Module>> GenerateModulesAsync(int nrOfModules, DateTime courseStart, DateTime courseEnd)
         {
@@ -200,7 +208,7 @@ namespace LMS.Infrastructure.Data
             var modules = faker.Generate(nrOfModules);
             string[] moduleNames = ["C# Basics", "Visual Studio", ".NET basics", "Debugging", "API"];
 
-            int avarageSpan = ((int)((courseStart - courseEnd)/nrOfModules).TotalDays);
+            int avarageSpan = ((int)((courseStart - courseEnd) / nrOfModules).TotalDays);
 
             for (int i = 0; i < nrOfModules; i++)
             {
@@ -244,15 +252,18 @@ namespace LMS.Infrastructure.Data
             return activities;
         }
 
-        private static async Task GenerateActivitiesTypesAsync(int nrOfActivities)
+        private static async Task GenerateActivitiesTypes(int nrOfActivities)
         {
             var faker = new Faker<ActivityType>("sv")
                 .RuleFor(at => at.Name, f => f.Name.JobTitle());
-            await context.ActivityTypes.AddRangeAsync(faker.Generate(nrOfActivities));
+            List<ActivityType> activityTypes = faker.Generate(nrOfActivities);
+            context.ActivityTypes.AddRange(activityTypes);
+            await context.SaveChangesAsync();
         }
 
         private static async Task<ICollection<Document>> GenerateDocumentsAsync(int nrOfDocuments)
         {
+
             var faker = new Faker<Document>("sv")
                 .RuleFor(d => d.Name, f => f.Lorem.Word())
                 .RuleFor(d => d.Description, f => f.Lorem.Text())
