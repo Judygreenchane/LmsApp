@@ -30,7 +30,7 @@ namespace LMS.Presemtation.Controllers
         [HttpGet("courselist")]
         public async Task<ActionResult<IEnumerable<CourseDto>>> GetAllCourses()
         {
-            var courseDtos = await _serviceManager.CourseService.GetAllCoursesAsync();
+            var courseDtos = _serviceManager.CourseService.GetAllCourses(); //ToDo: Fix Async/not async method
             return Ok(courseDtos);
         }
         [HttpPost("createcourse")]

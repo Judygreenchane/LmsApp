@@ -21,17 +21,17 @@ namespace LMS.Services
             _uow = uow;
             _mapper = mapper;
         }
-        public async Task<IEnumerable<CourseDto>> GetAllCoursesAsync()
+        public IEnumerable<CourseDto> GetAllCourses()
         {
-            var courses = await _uow.CourseRepository.GetAllCoursesAsync();
+            var courses = _uow.CourseRepository.FindAll();
             return _mapper.Map<IEnumerable<CourseDto>>(courses);
         }
         public async Task<CourseDto> GetCourseByIdAsync(int courseId)
         {
-            Course? course = await _uow.CourseRepository.GetCourseByIdAsync(courseId);
+            Course? course = await _uow.CourseRepository.FindByIdAsync(courseId);
             if (course == null)
             {
-               
+                //Todo
             }
             return _mapper.Map<CourseDto>(course);
         }
@@ -47,7 +47,7 @@ namespace LMS.Services
         }
         public async Task<CourseDto> UpdateCourseAsync(int id, JsonPatchDocument<CourseUpdateDto> patchDocument)
         {
-            var courseToPatch = await _uow.CourseRepository.GetCourseByIdAsync(id, true);
+            var courseToPatch = await _uow.CourseRepository.FindByIdAsync(id);
             if (courseToPatch == null) throw new KeyNotFoundException($"{id} not found.");
 
             var course = _mapper.Map<CourseUpdateDto>(courseToPatch);
@@ -61,7 +61,7 @@ namespace LMS.Services
 
         public async Task DeleteCourseAsync(int id)
         {
-            var courseToDelete = await _uow.CourseRepository.GetCourseByIdAsync(id, true);
+            var courseToDelete = await _uow.CourseRepository.FindByIdAsync(id);
             if (courseToDelete == null) throw new KeyNotFoundException($"{id} not found.");
             _uow.CourseRepository.Delete(courseToDelete);
 
