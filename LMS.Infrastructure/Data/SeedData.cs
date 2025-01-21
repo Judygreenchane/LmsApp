@@ -66,19 +66,19 @@ namespace LMS.Infrastructure.Data
                         if (adminExists && teacherExists && studentExists) break;
                     }
 
-                    if (!adminExists);
+                    if (!adminExists)
                     {
                         // Create admin user
                         await CreateAdminUserAsync();
                     }
 
-                    if (!teacherExists);
+                    if (!teacherExists)
                     {
                         // Generate teachers
                         await GenerateUsersAsync(2, teacherRole);
                     }
 
-                    if (!studentExists);
+                    if (!studentExists)
                     {
                         // Generate teachers
                         await GenerateUsersAsync(5, studentRole);
