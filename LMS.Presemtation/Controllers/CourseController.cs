@@ -24,6 +24,7 @@ namespace LMS.Presemtation.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<CourseDto>> GetOneCourse(int id)
         {
+            
             var courseDto = await _serviceManager.CourseService.GetCourseByIdAsync(id);
             return Ok(courseDto);
         }
