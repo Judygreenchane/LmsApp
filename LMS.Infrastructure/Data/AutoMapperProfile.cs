@@ -2,6 +2,7 @@
 using Domain.Models.Entities;
 using LMS.Shared.DTOs;
 using LMS.Shared.DTOs.Activity;
+using LMS.Shared.DTOs.ActivityType;
 using LMS.Shared.DTOs.Course;
 using LMS.Shared.DTOs.Module;
 

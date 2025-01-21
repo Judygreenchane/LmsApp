@@ -1,4 +1,5 @@
 ﻿using LMS.Shared.DTOs.BaseDtos;
+using LMS.Shared.DTOs.Document;
 using LMS.Shared.DTOs.Module;
 using System;
 using System.Collections.Generic;
