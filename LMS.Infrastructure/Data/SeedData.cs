@@ -219,7 +219,7 @@ namespace LMS.Infrastructure.Data
         {
             var faker = new Faker<ActivityType>("sv")
                 .RuleFor(at => at.Name, f => f.Name.JobTitle());
-            await context.ActivityTypes.AddRangeAsync(faker.Generate(5));
+            await context.ActivityTypes.AddRangeAsync(faker.Generate(nrOfActivities));
         }
 
         private static async Task<ICollection<Document>> GenerateDocumentsAsync(int nrOfDocuments)
