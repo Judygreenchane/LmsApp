@@ -34,27 +34,44 @@ namespace LMS.Infrastructure.Data
                     // Apply any pending migrations
                     await context.Database.MigrateAsync();
 
+                    userManager = serviceProvider.GetRequiredService<UserManager<ApplicationUser>>()
+                        ?? throw new ArgumentNullException(nameof(userManager));
+
+                    roleManager = serviceProvider.GetRequiredService<RoleManager<IdentityRole>>()
+                        ?? throw new ArgumentNullException(nameof(roleManager));
+
                     // Check if data already exists
-                    if (!await context.Users.AnyAsync())
+                    if (!await context.Roles.AnyAsync(r => r.Name == adminRole))
                     {
-                        userManager = serviceProvider.GetRequiredService<UserManager<ApplicationUser>>()
-                            ?? throw new ArgumentNullException(nameof(userManager));
+                        await CreateRolesAsync([adminRole]);
+                    }
+                    if (!await context.Roles.AnyAsync(r => r.Name == teacherRole))
+                    {
+                        await CreateRolesAsync([teacherRole]);
+                    }
+                    if (!await context.Roles.AnyAsync(r => r.Name == studentRole))
+                    {
+                        await CreateRolesAsync([studentRole]);
+                    }
 
-                        roleManager = serviceProvider.GetRequiredService<RoleManager<IdentityRole>>()
-                            ?? throw new ArgumentNullException(nameof(roleManager));
-
-                        // Create roles
-                        await CreateRolesAsync([adminRole, teacherRole, studentRole]);
-
+                    if (!await context.Users.AnyAsync(u => userManager.IsInRoleAsync(u, adminRole).Result));
+                    {
                         // Create admin user
                         await CreateAdminUserAsync();
+                    }
 
+                    if (!await context.Users.AnyAsync(u => userManager.IsInRoleAsync(u, teacherRole).Result));
+                    {
                         // Generate teachers
                         await GenerateUsersAsync(2, teacherRole);
-
-                        // Generate students
-                        await GenerateUsersAsync(5);
                     }
+
+                    if (!await context.Users.AnyAsync(u => userManager.IsInRoleAsync(u, studentRole).Result));
+                    {
+                        // Generate teachers
+                        await GenerateUsersAsync(5, studentRole);
+                    }
+
 
                     if (!context.ActivityTypes.Any())
                     {
