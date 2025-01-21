@@ -1,11 +1,12 @@
+using Domain.Models.Entities;
 using LMS.API.Extensions;
 using LMS.Infrastructure.Data;
 using LMS.Presemtation;
-using LMS.Shared.User;
+using LMS.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using System.Security.Claims;
-
+using Services.Contracts;
+using Microsoft.Extensions.Logging;
 
 namespace LMS.API;
 
@@ -15,57 +16,48 @@ public class Program
     {
         var builder = WebApplication.CreateBuilder(args);
 
-        // Add services to the container.
+        // Add DbContext
         builder.Services.AddDbContext<LmsContext>(options =>
-            options.UseSqlServer(builder.Configuration.GetConnectionString("LmsContext") ??
-                throw new InvalidOperationException("Connection string 'LmsContext' not found."),
-                sqlServerOptionsAction: sqlOptions =>
-                {
-                    sqlOptions.EnableRetryOnFailure(
-                        maxRetryCount: 5,
-                        maxRetryDelay: TimeSpan.FromSeconds(30),
-                        errorNumbersToAdd: null);
-                }));
+            options.UseSqlServer(
+                builder.Configuration.GetConnectionString("LmsContext"),
+                b => b.MigrationsAssembly("LMS.Infrastructure")
+            ));
+
+        // Register services
+        builder.Services.AddScoped<IAuthService, AuthService>();
+        builder.Services.AddScoped<IServiceManager, ServiceManager>();
 
         // Add Identity
-        builder.Services.AddIdentityCore<ApplicationUser>(opt =>
+        builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
         {
-            opt.SignIn.RequireConfirmedAccount = false;
-            opt.User.RequireUniqueEmail = true;
-            opt.Password.RequireDigit = true;
-            opt.Password.RequireLowercase = true;
-            opt.Password.RequireUppercase = true;
-            opt.Password.RequireNonAlphanumeric = true;
-            opt.Password.RequiredLength = 6;
+            options.Password.RequiredLength = 6;
+            options.Password.RequireDigit = true;
+            options.Password.RequireLowercase = true;
+            options.Password.RequireUppercase = true;
+            options.Password.RequireNonAlphanumeric = true;
+            options.User.RequireUniqueEmail = true;
+            options.SignIn.RequireConfirmedEmail = false;
         })
-        .AddRoles<IdentityRole>()
         .AddEntityFrameworkStores<LmsContext>()
         .AddDefaultTokenProviders();
 
+        // Configure Controllers
         builder.Services.AddControllers(configure =>
         {
             configure.ReturnHttpNotAcceptable = true;
         })
-                        .AddNewtonsoftJson()
-                        .AddApplicationPart(typeof(AssemblyReference).Assembly);
+        .AddNewtonsoftJson()
+        .AddApplicationPart(typeof(AssemblyReference).Assembly);
 
-        builder.Services.ConfigureOpenApi();
-        builder.Services.AddAutoMapper(typeof(AutoMapperProfile));
-        builder.Services.ConfigureServiceLayerServices();
-        builder.Services.ConfigureRepositories();
+        // Configure Additional Services
         builder.Services.ConfigureJwt(builder.Configuration);
         builder.Services.ConfigureCors();
+        builder.Services.ConfigureOpenApi();
+        builder.Services.AddAutoMapper(typeof(AutoMapperProfile));
 
-        builder.Services.AddIdentityCore<ApplicationUser>(opt =>
-            {
-                opt.SignIn.RequireConfirmedAccount = false;
-                opt.User.RequireUniqueEmail = true;
-            })
-                .AddRoles<IdentityRole>()
-                .AddEntityFrameworkStores<LmsContext>()
-                .AddDefaultTokenProviders();
-
-        builder.Services.Configure<PasswordHasherOptions>(options => options.IterationCount = 10000);
+        // Configure Repositories and Services
+        builder.Services.ConfigureRepositories();
+        builder.Services.ConfigureServiceLayerServices();
 
         var app = builder.Build();
 
@@ -74,6 +66,7 @@ public class Program
         {
             app.UseSwagger();
             app.UseSwaggerUI();
+
             try
             {
                 await app.SeedDataAsync();
@@ -85,13 +78,12 @@ public class Program
             }
         }
 
+
+
         app.UseHttpsRedirection();
-
         app.UseCors("AllowAll");
-
         app.UseAuthentication();
         app.UseAuthorization();
-
         app.MapControllers();
 
         app.Run();
