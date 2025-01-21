@@ -14,20 +14,20 @@ namespace LMS.Infrastructure.Repositories
         public CourseRepository(LmsContext context) : base(context)
         {
         }
-        public async Task<List<Course>> GetAllCoursesAsync(bool trackChanges = false)
-        {
-           return await FindAll(trackChanges)
-                .Include(c=> c.Modules)
-                .ToListAsync();
-        }
-        public async Task<Course?> GetCourseByIdAsync(int courseId, bool trackChanges = false)
-        {
-            return await
-                FindByCondition(c => c.CourseId.Equals(courseId), trackChanges)
-                .Include(c => c.Modules)
-                .ThenInclude(m => m.Activities)
-                .ThenInclude(a => a.ActivityType)
-                .FirstOrDefaultAsync();
-        }
+        //public async Task<List<Course>> GetAllCoursesAsync(bool trackChanges = false)
+        //{
+        //   return await FindAll(trackChanges)
+        //       .Include(c=> c.Modules)
+        //        .ToListAsync();
+        //}
+        //public async Task<Course?> GetCourseByIdAsync(int courseId, bool trackChanges = false)
+        //{
+        //    return await
+        //        FindByCondition(c => c.CourseId.Equals(courseId), trackChanges)
+        //        .Include(c => c.Modules)
+        //        .ThenInclude(m => m.Activities)
+        //        .ThenInclude(a => a.ActivityType)
+        //        .FirstOrDefaultAsync();
+        //}
     }
 }
