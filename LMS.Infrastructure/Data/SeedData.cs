@@ -12,7 +12,7 @@ namespace LMS.Infrastructure.Data
     {
         private static UserManager<ApplicationUser> userManager = null!;
         private static RoleManager<IdentityRole> roleManager = null!;
-        private static ITempDB dB = null!;
+        private static LmsContext context = null!;
         private const string adminRole = "Admin";
         private const string teacherRole = "Teacher";
         private const string studentRole = "Student";
@@ -26,43 +26,50 @@ namespace LMS.Infrastructure.Data
                 var serviceProvider = scope.ServiceProvider;
                 try
                 {
-                    var db = serviceProvider.GetRequiredService<LmsContext>();
+                    context = serviceProvider.GetRequiredService<LmsContext>();
 
                     // Ensure database is created
-                    await db.Database.EnsureCreatedAsync();
+                    await context.Database.EnsureCreatedAsync();
 
                     // Apply any pending migrations
-                    await db.Database.MigrateAsync();
+                    await context.Database.MigrateAsync();
 
                     // Check if data already exists
-                    if (await db.Users.AnyAsync()) return;
+                    if (!await context.Users.AnyAsync())
+                    {
+                        userManager = serviceProvider.GetRequiredService<UserManager<ApplicationUser>>()
+                            ?? throw new ArgumentNullException(nameof(userManager));
 
-                    userManager = serviceProvider.GetRequiredService<UserManager<ApplicationUser>>()
-                        ?? throw new ArgumentNullException(nameof(userManager));
+                        roleManager = serviceProvider.GetRequiredService<RoleManager<IdentityRole>>()
+                            ?? throw new ArgumentNullException(nameof(roleManager));
 
-                    roleManager = serviceProvider.GetRequiredService<RoleManager<IdentityRole>>()
-                        ?? throw new ArgumentNullException(nameof(roleManager));
+                        // Create roles
+                        await CreateRolesAsync([adminRole, teacherRole, studentRole]);
 
-                    // Create roles
-                    await CreateRolesAsync([adminRole, teacherRole, studentRole]);
+                        // Create admin user
+                        await CreateAdminUserAsync();
 
-                    // Create admin user
-                    await CreateAdminUserAsync();
+                        // Generate teachers
+                        await GenerateUsersAsync(2, teacherRole);
 
-                    // Generate teachers
-                    await GenerateUsersAsync(2, teacherRole);
+                        // Generate students
+                        await GenerateUsersAsync(5);
+                    }
 
-                    // Generate students
-                    await GenerateUsersAsync(5);
+                    if (!context.ActivityTypes.Any())
+                    {
+                        // Generate ActivityTypes
+                        await GenerateActivitiesTypesAsync(5);
+                    }
 
-                    // Generate ActivityTypes
-                    await GenerateActivitiesTypesAsync(5);
-
-                    //Create a Course
-                    await CreateCoursesAsync();
+                    if (!context.Courses.Any())
+                    {
+                        //Create a Course
+                        await CreateCourseAsync();
+                    }
 
                     // Save changes
-                    await db.SaveChangesAsync();
+                    await context.SaveChangesAsync();
                 }
                 catch (Exception ex)
                 {
@@ -139,7 +146,7 @@ namespace LMS.Infrastructure.Data
             }
         }
 
-        private static async Task CreateCoursesAsync()
+        private static async Task CreateCourseAsync()
         {
             var faker = new Faker();
             DateTime startDate = faker.Date.Soon(2);
@@ -153,7 +160,7 @@ namespace LMS.Infrastructure.Data
                 Modules = await GenerateModulesAsync(3, startDate, endDate),
                 Documents = await GenerateDocumentsAsync(3)
             };
-            await dB.AddAsync(course);
+            await context.Courses.AddAsync(course);
 
         }
         private static async Task<ICollection<Module>> GenerateModulesAsync(int nrOfModules, DateTime courseStart, DateTime courseEnd)
@@ -202,7 +209,7 @@ namespace LMS.Infrastructure.Data
 
                 if (i == nrOfActivities - 1) activity.EndTime = moduleEnd;
                 else activity.EndTime = activity.StartTime.AddDays(avarageSpan);
-                activity.ActivityType = await dB.GetRandomActivityTypeAsync(); //Todo
+                activity.ActivityType = await context.ActivityTypes.FirstOrDefaultAsync(); //Todo
                 activity.Documents = await GenerateDocumentsAsync(2);
             }
             return activities;
@@ -212,17 +219,15 @@ namespace LMS.Infrastructure.Data
         {
             var faker = new Faker<ActivityType>("sv")
                 .RuleFor(at => at.Name, f => f.Name.JobTitle());
-            await dB.AddAsync(faker.Generate(5));
+            await context.ActivityTypes.AddRangeAsync(faker.Generate(5));
         }
 
         private static async Task<ICollection<Document>> GenerateDocumentsAsync(int nrOfDocuments)
         {
             var faker = new Faker<Document>("sv")
                 .RuleFor(d => d.Name, f => f.Lorem.Word())
-                .RuleFor(d => d.DocumentType, f => f.System.FileType())
                 .RuleFor(d => d.Description, f => f.Lorem.Text())
-                .RuleFor(d => d.FilePath, f => f.System.FilePath())
-                .RuleFor(d => d.UploadedDate, f => f.Date.Recent(3));
+                .RuleFor(d => d.FilePath, f => f.System.FilePath());
 
             var documents = faker.Generate(nrOfDocuments);
             var admin = await userManager.FindByEmailAsync(adminEmail);
@@ -230,7 +235,7 @@ namespace LMS.Infrastructure.Data
             {
                 foreach (Document document in documents)
                 {
-                    document.UploadedByUser = admin;
+                    document.User = admin;
                 }
             }
             else throw new Exception("No admin found");
@@ -238,11 +243,5 @@ namespace LMS.Infrastructure.Data
             return documents;
         }
 
-    }
-    interface ITempDB
-    {
-        public Task AddAsync(Course course);
-        public Task AddAsync(List<ActivityType> activityType);
-        public Task<ActivityType> GetRandomActivityTypeAsync();
     }
 }
