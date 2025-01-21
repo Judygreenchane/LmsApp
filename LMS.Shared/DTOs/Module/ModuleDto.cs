@@ -1,6 +1,8 @@
-﻿using LMS.Shared.DTOs.BaseDtos;
+﻿using LMS.Shared.DTOs.Activity;
+using LMS.Shared.DTOs.BaseDtos;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -12,5 +14,8 @@ namespace LMS.Shared.DTOs.Module
         public string Description { get; set; }
         public DateTime StartDate { get; set; }
         public DateTime EndDate { get; set; }
+
+        public List<ActivityDto> Activities { get; set; }
+        public List<DocumentDto> Documents { get; init; }
     }
 }
