@@ -26,6 +26,5 @@ namespace LMS.Infrastructure.Repositories
 
             return base.FindAll(trackChanges);
         }
-
     }
 }

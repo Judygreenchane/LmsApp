@@ -7,7 +7,8 @@ using System.Threading.Tasks;
 
 namespace Domain.Contracts
 {
-    public interface ICourseRepository : IRepositoryWithCollections<Course>
+    public interface IActivityRepository : IRepositoryBase<Activity>
     {
+        IQueryable<Activity> FindAll(bool includeDocuments = false, bool trackChanges = false);
     }
 }

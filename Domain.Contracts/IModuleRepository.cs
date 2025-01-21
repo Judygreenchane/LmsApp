@@ -2,8 +2,7 @@
 
 namespace Domain.Contracts
 {
-    public interface IModuleRepository : IRepositoryBase<Module>
+    public interface IModuleRepository : IRepositoryWithCollections<Module>
     {
-        IQueryable<Module> FindAll(bool includeActivities = false, bool includeDocuments = false, bool trackChanges = false);
     }
 }
