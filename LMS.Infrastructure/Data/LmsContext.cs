@@ -27,11 +27,11 @@ public class LmsContext : IdentityDbContext<ApplicationUser, IdentityRole, strin
         modelBuilder.Entity<IdentityRoleClaim<string>>().ToTable("AspNetRoleClaims");
 
         // Seed roles (if necessary)
-        modelBuilder.Entity<IdentityRole>().HasData(
-            new IdentityRole { Id = Guid.NewGuid().ToString(), Name = "Admin", NormalizedName = "ADMIN" },
-            new IdentityRole { Id = Guid.NewGuid().ToString(), Name = "Teacher", NormalizedName = "TEACHER" },
-            new IdentityRole { Id = Guid.NewGuid().ToString(), Name = "Student", NormalizedName = "STUDENT" }
-        );
+        //modelBuilder.Entity<IdentityRole>().HasData(
+        //    new IdentityRole { Id = Guid.NewGuid().ToString(), Name = "Admin", NormalizedName = "ADMIN" },
+        //    new IdentityRole { Id = Guid.NewGuid().ToString(), Name = "Teacher", NormalizedName = "TEACHER" },
+        //    new IdentityRole { Id = Guid.NewGuid().ToString(), Name = "Student", NormalizedName = "STUDENT" }
+        //);
 
         // Define relationships explicitly to prevent shadow properties
 

@@ -224,6 +224,7 @@ namespace LMS.Infrastructure.Data
 
         private static async Task<ICollection<Document>> GenerateDocumentsAsync(int nrOfDocuments)
         {
+           
             var faker = new Faker<Document>("sv")
                 .RuleFor(d => d.Name, f => f.Lorem.Word())
                 .RuleFor(d => d.Description, f => f.Lorem.Text())
