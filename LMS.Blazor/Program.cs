@@ -3,14 +3,14 @@ using LMS.Blazor.Components;
 using LMS.Blazor.Components.Account;
 using LMS.Blazor.Data;
 using LMS.Blazor.Services;
-using LMS.Shared.User;
+using LMS.Blazor;
 
 
 
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Domain.Models.Entities;
+
 
 var builder = WebApplication.CreateBuilder(args);
 
