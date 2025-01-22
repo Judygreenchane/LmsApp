@@ -28,7 +28,8 @@ namespace LMS.Services
         }
         public async Task<CourseDto> GetCourseByIdAsync(int courseId)
         {
-            Course? course = await _uow.CourseRepository.FindByIdAsync(courseId);
+             Course? course = await _uow.CourseRepository.FindByIdAsync(courseId);
+            //Course? course = await _uow.CourseRepository.FindByCondition()
             if (course == null)
             {
                 //Todo

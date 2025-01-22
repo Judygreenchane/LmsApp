@@ -31,7 +31,7 @@ else
                         <td>@item.Description</td>
                         <td>@item.StartDate.ToString("yyyy-MM-dd")</td>
                         <td>@item.EndDate.ToString("yyyy-MM-dd")</td>
-                        <td><a href=@($"courseedit/{item.CourseId}")>Details</a></td>
+                        <td><a href=@($"courseedit/{item.Id}")>Details</a></td>
                        @*  <td><a href=@($"courseoverview/{item.CourseId}")>Details</a></td> *@
                              
                 </tr>
@@ -39,32 +39,7 @@ else
         </tbody>
     </table>
 
-        @foreach (var course in courses)
-        {
-        <table class="table">
-            <thead>
-                <tr>
-                        <th>@course.Name</th>
-                    
-                    
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var module in course.Modules)
-                {
-                    <tr>
-                        <td>@module.Name</td>
-                            <td>@module.Description</td>
-                            <td>@module.StartDate.ToString("yyyy-MM-dd")</td>
-                            <td>@module.EndDate.ToString("yyyy-MM-dd")</td>
-                       
-
-                    </tr>
-                }
-                
-            </tbody>
-        </table>
-        }
+        
     </div>
 }
 <style>
