@@ -1,0 +1,87 @@
+﻿@page "/courseoverview/{id:int}"
+@rendermode InteractiveWebAssembly
+
+@using LMS.Blazor.Client.Services
+@using LMS.Shared.DTOs
+@using LMS.Shared.DTOs.Course
+<h3>CourseOverview</h3>
+<h3>Id is : @id</h3>
+
+
+ <div class="box">
+@if(course!=null)
+{
+@foreach (var module in course.Modules)
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>@module.Name</th>
+
+
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var activity in module.Activities)
+            {
+                <tr>
+                    <td>@activity.Name</td>
+                    <td>@activity.Description</td>
+                    <td>@activity.ActivityType.Name</td>
+                    <td>@activity.StartTime</td>
+                    <td>@activity.EndTime</td>
+                </tr>
+            }
+
+        </tbody>
+    </table>
+}
+    }
+</div>
+<style>
+    .box {
+        width: 100%;
+        background: white;
+        padding: 2.5rem;
+        border-radius: 16px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+    }
+</style>
+ 
+@code {
+    [Parameter]
+    public int id { get; set;}
+    [Inject]
+    private IApiService _apiService { get; set; } = default!;
+
+    // private AuthenticationStateProvider AuthenticationStateProvider { get; set; } = default!;
+
+    private CourseDto? course;
+
+
+    protected async override Task OnAfterRenderAsync(bool firstRender)
+    {
+
+        if (firstRender)
+        {
+            try
+            {
+                if (_apiService != null)
+                {
+                    course = await _apiService.CallApiAsync<CourseDto>($"api/Course/{id}");
+                    StateHasChanged(); // Trigger UI update after fetching data
+                }
+                else
+                {
+                    Console.WriteLine("ApiService is not initialized");
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error while fetching courses: {ex.Message}");
+            }
+        }
+
+
+    }
+}
