@@ -66,6 +66,13 @@ namespace LMS.Services
                 ? throw new KeyNotFoundException($"module with id: {Id} not found") : mapper.Map<ModuleDto>(module);
         }
 
+        public async Task<ModuleDto> FindByIdAsync(int Id, bool includeActivities = false, bool includeDocuments = false, bool trackChanges = false)
+        {
+            Module? module = await uow.ModuleRepository.FindByIdAsync(Id, includeActivities, includeDocuments, trackChanges);
+            return module == null 
+                ? throw new KeyNotFoundException($"module with id: {Id} not found") : mapper.Map<ModuleDto>(module);
+        }
+
         public async Task<ModuleDto> UpdateAsync(int id, JsonPatchDocument<ModuleUpdateDto> patchDocument)
         {
             var moduleToPatch = await uow.ModuleRepository.FindByIdAsync(id) 
