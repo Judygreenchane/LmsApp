@@ -24,16 +24,17 @@ namespace LMS.Presemtation.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<CourseDto>> GetOneCourse(int id)
         {
+            
             var courseDto = await _serviceManager.CourseService.GetCourseByIdAsync(id);
             return Ok(courseDto);
         }
-        [HttpGet]
+        [HttpGet("courselist")]
         public async Task<ActionResult<IEnumerable<CourseDto>>> GetAllCourses()
         {
-            var courseDtos = _serviceManager.CourseService.GetAllCourses(); //ToDo: Fix Async/not async method
+            var courseDtos = _serviceManager.CourseService.GetAllCourses(); //ToDo:  Async or not async method
             return Ok(courseDtos);
         }
-        [HttpPost]
+        [HttpPost("createcourse")]
         public async Task<ActionResult> CreateCourse(CourseCreateDto dto)
         {
             var createdCourseDto = await _serviceManager.CourseService.CreateCourseAsync(dto);

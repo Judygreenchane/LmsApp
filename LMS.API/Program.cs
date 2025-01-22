@@ -28,7 +28,7 @@ public class Program
         builder.Services.AddScoped<IServiceManager, ServiceManager>();
 
         // Add Identity
-        builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
+        builder.Services.AddIdentityCore<ApplicationUser>(options =>
         {
             options.Password.RequiredLength = 6;
             options.Password.RequireDigit = true;
@@ -38,8 +38,11 @@ public class Program
             options.User.RequireUniqueEmail = true;
             options.SignIn.RequireConfirmedEmail = false;
         })
-        .AddEntityFrameworkStores<LmsContext>()
-        .AddDefaultTokenProviders();
+             .AddRoles<IdentityRole>()
+    .AddEntityFrameworkStores<LmsContext>()
+    .AddSignInManager()
+    .AddDefaultTokenProviders();
+       
 
         // Configure Controllers
         builder.Services.AddControllers(configure =>
@@ -58,6 +61,8 @@ public class Program
         // Configure Repositories and Services
         builder.Services.ConfigureRepositories();
         builder.Services.ConfigureServiceLayerServices();
+
+        builder.Services.Configure<PasswordHasherOptions>(options => options.IterationCount = 10000);
 
         var app = builder.Build();
 

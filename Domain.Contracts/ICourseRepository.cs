@@ -9,6 +9,6 @@ namespace Domain.Contracts
 {
     public interface ICourseRepository : IRepositoryBase<Course>
     {
-        IQueryable<Course> FindAll(bool includeModules = false, bool includeDocuments = false, bool trackChanges = false);
+        //IQueryable<Course> FindAll(bool includeModules = false, bool includeDocuments = false, bool trackChanges = false);
     }
 }

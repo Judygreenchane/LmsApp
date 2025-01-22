@@ -1,4 +1,5 @@
-﻿using LMS.Blazor.Services;
+﻿using LMS.Blazor.Client.Pages;
+using LMS.Blazor.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Net.Http.Headers;
@@ -19,31 +20,42 @@ public class ProxyController : ControllerBase
         _tokenService = tokenService;
     }
 
-    [HttpGet]
+
     //[HttpPost]
     //[HttpPut]
     //[HttpDelete]
     //[HttpPatch]
-    public async Task<IActionResult> Proxy() //ToDo send endpoint uri here!
+    [HttpGet("{*request}")]
+    public async Task<IActionResult> Proxy(string request) //ToDo send endpoint uri here!
     {
-        string endpoint = "api/demoauth";
-        var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        // string endpoint = "api/demoauth";
+        string endpoint = $"api/{request}";
+        //if (request == "allcourse")
+        //{
+        //    endpoint = "api/course/courselist";
+        //}
+        //if (request == "SelectedCourse")
+        //{
+        //    endpoint = "api/Course/4";
+        //}
+        //endpoint =  request;
+        // var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 
-        if (userId == null)
-            return Unauthorized();
+        // if (userId == null)
+        //  return Unauthorized();
 
 
-        var accessToken = await _tokenService.GetAccessTokenAsync(userId);
+        //  var accessToken = await _tokenService.GetAccessTokenAsync(userId);
 
         //ToDo: Before continue look for expired accesstoken and call refresh enpoint instead.
         //Better with delegatinghandler or separate service to extract this logic!
 
-        if (string.IsNullOrEmpty(accessToken))
-        {
-            return Unauthorized();
-        }
+        //if (string.IsNullOrEmpty(accessToken))
+        //{
+        //    return Unauthorized();
+        //}
         var client = _httpClientFactory.CreateClient("LmsAPIClient");
-        client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
+        // client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
 
         var targetUri = new Uri($"{client.BaseAddress}{endpoint}{Request.QueryString}");
         var method = new HttpMethod(Request.Method);
@@ -65,9 +77,10 @@ public class ProxyController : ControllerBase
 
         var response = await client.SendAsync(requestMessage);
 
-        if (!response.IsSuccessStatusCode)
-            return Unauthorized();
+        // if (!response.IsSuccessStatusCode)
+        //     return Unauthorized();
 
         return StatusCode((int)response.StatusCode, await response.Content.ReadAsStringAsync());
     }
 }
+

@@ -34,32 +34,48 @@ namespace LMS.Infrastructure.Data
                     // Apply any pending migrations
                     await context.Database.MigrateAsync();
 
+                    userManager = serviceProvider.GetRequiredService<UserManager<ApplicationUser>>()
+                        ?? throw new ArgumentNullException(nameof(userManager));
+
+                    roleManager = serviceProvider.GetRequiredService<RoleManager<IdentityRole>>()
+                        ?? throw new ArgumentNullException(nameof(roleManager));
+
                     // Check if data already exists
-                    if (!await context.Users.AnyAsync())
+                    if (!await context.Roles.AnyAsync(r => r.Name == adminRole))
                     {
-                        userManager = serviceProvider.GetRequiredService<UserManager<ApplicationUser>>()
-                            ?? throw new ArgumentNullException(nameof(userManager));
-
-                        roleManager = serviceProvider.GetRequiredService<RoleManager<IdentityRole>>()
-                            ?? throw new ArgumentNullException(nameof(roleManager));
-
-                        // Create roles
-                        await CreateRolesAsync([adminRole, teacherRole, studentRole]);
-
-                        // Create admin user
-                        await CreateAdminUserAsync();
-
-                        // Generate teachers
-                        await GenerateUsersAsync(2, teacherRole);
-
-                        // Generate students
-                        await GenerateUsersAsync(5);
+                        await CreateRolesAsync([adminRole]);
+                    }
+                    if (!await context.Roles.AnyAsync(r => r.Name == teacherRole))
+                    {
+                        await CreateRolesAsync([teacherRole]);
+                    }
+                    if (!await context.Roles.AnyAsync(r => r.Name == studentRole))
+                    {
+                        await CreateRolesAsync([studentRole]);
                     }
 
-                    if (!context.ActivityTypes.Any())
+                    bool adminExists = false;
+                    bool teacherExists = false;
+                    bool studentExists = false;
+
+                    foreach (var user in context.Users)
+                    {
+                        if (await userManager.IsInRoleAsync(user, adminRole)) adminExists = true;
+                        if (await userManager.IsInRoleAsync(user, teacherRole)) teacherExists = true;
+                        if (await userManager.IsInRoleAsync(user, studentRole)) studentExists = true;
+                        if (adminExists && teacherExists && studentExists) break;
+                    }
+
+                    if (!adminExists)
+                    {
+                        // Create admin user
+                        await CreateAdminUserAsync();
+                    }
+
+                    if (!teacherExists);
                     {
                         // Generate ActivityTypes
-                        await GenerateActivitiesTypesAsync(5);
+                        await GenerateActivitiesTypes(5);
                     }
 
                     if (!context.Courses.Any())
@@ -67,6 +83,21 @@ namespace LMS.Infrastructure.Data
                         //Create a Course
                         await CreateCourseAsync();
                     }
+
+                    if (!teacherExists)
+                    {
+                        // Generate teachers
+                        await GenerateUsersAsync(2, teacherRole);
+                    }
+
+                    if (!studentExists)
+                    {
+                        // Generate teachers
+                        await GenerateUsersAsync(5, studentRole);
+                    }
+
+
+
 
                     // Save changes
                     await context.SaveChangesAsync();
@@ -142,6 +173,12 @@ namespace LMS.Infrastructure.Data
                     {
                         await userManager.AddToRoleAsync(user, role);
                     }
+                    if (role == studentRole)
+                    {
+                        var random = new Random();
+                        List<Course> courses = await context.Courses.ToListAsync();
+                        user.Course = courses[random.Next(0, courses.Count)];
+                    }
                 }
             }
         }
@@ -160,8 +197,8 @@ namespace LMS.Infrastructure.Data
                 Modules = await GenerateModulesAsync(3, startDate, endDate),
                 Documents = await GenerateDocumentsAsync(3)
             };
-            await context.Courses.AddAsync(course);
-
+            context.Courses.Add(course);
+            await context.SaveChangesAsync();
         }
         private static async Task<ICollection<Module>> GenerateModulesAsync(int nrOfModules, DateTime courseStart, DateTime courseEnd)
         {
@@ -171,7 +208,7 @@ namespace LMS.Infrastructure.Data
             var modules = faker.Generate(nrOfModules);
             string[] moduleNames = ["C# Basics", "Visual Studio", ".NET basics", "Debugging", "API"];
 
-            int avarageSpan = ((int)((courseStart - courseEnd)/nrOfModules).TotalDays);
+            int avarageSpan = ((int)((courseStart - courseEnd) / nrOfModules).TotalDays);
 
             for (int i = 0; i < nrOfModules; i++)
             {
@@ -215,15 +252,18 @@ namespace LMS.Infrastructure.Data
             return activities;
         }
 
-        private static async Task GenerateActivitiesTypesAsync(int nrOfActivities)
+        private static async Task GenerateActivitiesTypes(int nrOfActivities)
         {
             var faker = new Faker<ActivityType>("sv")
                 .RuleFor(at => at.Name, f => f.Name.JobTitle());
-            await context.ActivityTypes.AddRangeAsync(faker.Generate(nrOfActivities));
+            List<ActivityType> activityTypes = faker.Generate(nrOfActivities);
+            context.ActivityTypes.AddRange(activityTypes);
+            await context.SaveChangesAsync();
         }
 
         private static async Task<ICollection<Document>> GenerateDocumentsAsync(int nrOfDocuments)
         {
+
             var faker = new Faker<Document>("sv")
                 .RuleFor(d => d.Name, f => f.Lorem.Word())
                 .RuleFor(d => d.Description, f => f.Lorem.Text())
