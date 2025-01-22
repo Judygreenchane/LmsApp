@@ -72,6 +72,19 @@ namespace LMS.Infrastructure.Data
                         await CreateAdminUserAsync();
                     }
 
+                    if (!context.ActivityTypes.Any())
+
+                    {
+                        // Generate ActivityTypes
+                        await GenerateActivitiesTypes(5);
+                    }
+
+                    if (!context.Courses.Any())
+                    {
+                        //Create a Course
+                        await CreateCourseAsync();
+                    }
+
                     if (!teacherExists)
                     {
                         // Generate teachers
@@ -84,18 +97,6 @@ namespace LMS.Infrastructure.Data
                         await GenerateUsersAsync(5, studentRole);
                     }
 
-
-                    if (!context.ActivityTypes.Any())
-                    {
-                        // Generate ActivityTypes
-                        await GenerateActivitiesTypesAsync(5);
-                    }
-
-                    if (!context.Courses.Any())
-                    {
-                        //Create a Course
-                        await CreateCourseAsync();
-                    }
 
                     // Save changes
                     await context.SaveChangesAsync();

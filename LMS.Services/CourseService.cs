@@ -2,6 +2,7 @@
 using Domain.Contracts;
 using Domain.Models.Entities;
 using LMS.Shared.DTOs.Course;
+using LMS.Shared.DTOs.Module;
 using Microsoft.AspNetCore.JsonPatch;
 using Services.Contracts;
 using System;
@@ -26,14 +27,11 @@ namespace LMS.Services
             var courses = _uow.CourseRepository.FindAll(includeModules, includeDocuments, trackChanges);
             return _mapper.Map<IEnumerable<CourseDto>>(courses);
         }
-        public async Task<CourseDto> GetCourseByIdAsync(int courseId, bool includeModules = false, bool includeDocuments = false, bool trackChanges = false)
+        public async Task<CourseDto> GetCourseByIdAsync(int id, bool includeModules = false, bool includeDocuments = false, bool trackChanges = false)
         {
-            Course? course = await _uow.CourseRepository.FindByIdAsync(courseId, includeModules, includeDocuments, trackChanges);
-            if (course == null)
-            {
-                //Todo
-            }
-            return _mapper.Map<CourseDto>(course);
+            Course? course = await _uow.CourseRepository.FindByIdAsync(id, includeModules, includeDocuments, trackChanges);
+            return course == null
+                ? throw new KeyNotFoundException($"course with id: {id} not found") : _mapper.Map<CourseDto>(course);
         }
         public async Task<CourseDto> CreateCourseAsync(CourseCreateDto dto)
         {
@@ -66,9 +64,11 @@ namespace LMS.Services
             await _uow.CompleteAsync();
         }
 
-        public Task<CourseDto> GetCourseByIdAsync(int courseId)
+        public async Task<CourseDto> GetCourseByIdAsync(int id)
         {
-            throw new NotImplementedException();
+            Course? course = await _uow.CourseRepository.FindByIdAsync(id);
+            return course == null
+                ? throw new KeyNotFoundException($"course with id: {id} not found") : _mapper.Map<CourseDto>(course);
         }
     }
 }
