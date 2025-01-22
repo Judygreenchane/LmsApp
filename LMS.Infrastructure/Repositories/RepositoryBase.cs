@@ -30,6 +30,9 @@ public class RepositoryBase<T> : IRepositoryBase<T> where T : BaseEntity
 
     public async Task<T?> FindByIdAsync(int Id) => await DbSet.FirstOrDefaultAsync(t => t.Id == Id);
 
+    public async Task<bool> AnyAsync() => await DbSet.AnyAsync();
+    public async Task<bool> AnyAsync(int Id) => await DbSet.AnyAsync(t => t.Id == Id);
+
     public void Create(T entity) => DbSet.Add(entity);
     public void Delete(T entity) => DbSet.Remove(entity);
     public void Update(T entity) => DbSet.Update(entity);

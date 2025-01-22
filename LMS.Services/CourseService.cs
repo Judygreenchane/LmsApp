@@ -21,15 +21,14 @@ namespace LMS.Services
             _uow = uow;
             _mapper = mapper;
         }
-        public IEnumerable<CourseDto> GetAllCourses()
+        public IEnumerable<CourseDto> GetAllCourses(bool includeModules = false, bool includeDocuments = false, bool trackChanges = false)
         {
-            var courses = _uow.CourseRepository.FindAll();
+            var courses = _uow.CourseRepository.FindAll(includeModules, includeDocuments, trackChanges);
             return _mapper.Map<IEnumerable<CourseDto>>(courses);
         }
-        public async Task<CourseDto> GetCourseByIdAsync(int courseId)
+        public async Task<CourseDto> GetCourseByIdAsync(int courseId, bool includeModules = false, bool includeDocuments = false, bool trackChanges = false)
         {
-             Course? course = await _uow.CourseRepository.FindByIdAsync(courseId);
-            //Course? course = await _uow.CourseRepository.FindByCondition()
+            Course? course = await _uow.CourseRepository.FindByIdAsync(courseId, includeModules, includeDocuments, trackChanges);
             if (course == null)
             {
                 //Todo
@@ -48,9 +47,7 @@ namespace LMS.Services
         }
         public async Task<CourseDto> UpdateCourseAsync(int id, JsonPatchDocument<CourseUpdateDto> patchDocument)
         {
-            var courseToPatch = await _uow.CourseRepository.FindByIdAsync(id);
-            if (courseToPatch == null) throw new KeyNotFoundException($"{id} not found.");
-
+            var courseToPatch = await _uow.CourseRepository.FindByIdAsync(id) ?? throw new KeyNotFoundException($"{id} not found.");
             var course = _mapper.Map<CourseUpdateDto>(courseToPatch);
             patchDocument.ApplyTo(course);
 
@@ -62,11 +59,16 @@ namespace LMS.Services
 
         public async Task DeleteCourseAsync(int id)
         {
-            var courseToDelete = await _uow.CourseRepository.FindByIdAsync(id);
-            if (courseToDelete == null) throw new KeyNotFoundException($"{id} not found.");
+            var courseToDelete = await _uow.CourseRepository.FindByIdAsync(id) 
+                ?? throw new KeyNotFoundException($"{id} not found.");
             _uow.CourseRepository.Delete(courseToDelete);
 
             await _uow.CompleteAsync();
+        }
+
+        public Task<CourseDto> GetCourseByIdAsync(int courseId)
+        {
+            throw new NotImplementedException();
         }
     }
 }

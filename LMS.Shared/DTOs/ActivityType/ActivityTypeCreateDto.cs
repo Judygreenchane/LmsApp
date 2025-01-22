@@ -1,5 +1,4 @@
 ﻿using LMS.Shared.DTOs.BaseDtos;
-using LMS.Shared.DTOs.Module;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -7,19 +6,17 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace LMS.Shared.DTOs.Course
+namespace LMS.Shared.DTOs.ActivityType
 {
-    public  record CourseCreateDto : BaseCreateDto
+    public record ActivityTypeCreateDto : BaseCreateDto
     {
         [Required]
         public string Description { get; init; }
 
         [Required]
-        public DateTime StartDate { get; init; }
+        public DateTime StartTime { get; init; }
 
         [Required]
-        public DateTime EndDate { get; init; }
-
-       public List<ModuleCreateDto> Modules { get; init; }
+        public DateTime EndTime { get; init; }
     }
 }

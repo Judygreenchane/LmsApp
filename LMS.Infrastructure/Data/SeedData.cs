@@ -72,18 +72,6 @@ namespace LMS.Infrastructure.Data
                         await CreateAdminUserAsync();
                     }
 
-                    if (!teacherExists);
-                    {
-                        // Generate ActivityTypes
-                        await GenerateActivitiesTypes(5);
-                    }
-
-                    if (!context.Courses.Any())
-                    {
-                        //Create a Course
-                        await CreateCourseAsync();
-                    }
-
                     if (!teacherExists)
                     {
                         // Generate teachers
@@ -97,7 +85,17 @@ namespace LMS.Infrastructure.Data
                     }
 
 
+                    if (!context.ActivityTypes.Any())
+                    {
+                        // Generate ActivityTypes
+                        await GenerateActivitiesTypesAsync(5);
+                    }
 
+                    if (!context.Courses.Any())
+                    {
+                        //Create a Course
+                        await CreateCourseAsync();
+                    }
 
                     // Save changes
                     await context.SaveChangesAsync();

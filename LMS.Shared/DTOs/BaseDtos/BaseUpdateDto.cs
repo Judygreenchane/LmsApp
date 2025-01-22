@@ -5,11 +5,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace LMS.Shared.DTOs.Activity
+namespace LMS.Shared.DTOs.BaseDtos
 {
-    public  record ActivityTypeDto
+    public abstract record BaseUpdateDto
     {
-        public int ActivityTypeId { get; set; }
-        public string Name { get; set; }
+        [Required]
+        public string Name { get; init; }
     }
 }
