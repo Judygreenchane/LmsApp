@@ -25,20 +25,20 @@ public class ProxyController : ControllerBase
     //[HttpPut]
     //[HttpDelete]
     //[HttpPatch]
-    [HttpGet("{request}")]
+    [HttpGet("{*request}")]
     public async Task<IActionResult> Proxy(string request) //ToDo send endpoint uri here!
     {
         // string endpoint = "api/demoauth";
         string endpoint = $"api/{request}";
-        //if (request == "AllCourse")
+        //if (request == "allcourse")
         //{
-        //    endpoint = "api/Course/courselist";
+        //    endpoint = "api/course/courselist";
         //}
         //if (request == "SelectedCourse")
         //{
         //    endpoint = "api/Course/4";
         //}
-        endpoint =  request;
+        //endpoint =  request;
         // var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 
         // if (userId == null)

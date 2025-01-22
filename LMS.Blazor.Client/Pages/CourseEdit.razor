@@ -1,0 +1,44 @@
+﻿@page "/courseedit/{CourseId:int}"
+<h3>CourseEdit</h3>
+<h3>Id is : @CourseId</h3>
+@using LMS.Blazor.Client.Services
+@using LMS.Shared.DTOs
+@using LMS.Shared.DTOs.Course
+@code {
+    [Parameter]
+    public int CourseId { get; set; }
+    [Inject]
+    private IApiService _apiService { get; set; } = default!;
+
+    // private AuthenticationStateProvider AuthenticationStateProvider { get; set; } = default!;
+
+    
+    private CourseDto? course;
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            try
+            {
+                if (_apiService != null)
+                {
+                    course = await _apiService.CallApiGetAsync<CourseDto>($"Course/{CourseId}");
+                    StateHasChanged();
+                }
+                else
+                {
+                    Console.WriteLine("ApiService is not initialized.");
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error while fetching course: {ex.Message}");
+            }
+        }
+    }
+
+    
+
+}
+
+
