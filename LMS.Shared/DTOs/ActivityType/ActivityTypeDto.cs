@@ -1,15 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using LMS.Shared.DTOs.Activity;
+using LMS.Shared.DTOs.BaseDtos;
 
 namespace LMS.Shared.DTOs.ActivityType
 {
-    public record ActivityTypeDto
+    public record ActivityTypeDto : BaseDto
     {
-        public int ActivityTypeId { get; set; }
-        public string Name { get; set; }
+        public ICollection<ActivityDto>? Activities { get; set; }
+
     }
 }

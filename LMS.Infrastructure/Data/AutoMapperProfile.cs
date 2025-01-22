@@ -4,6 +4,7 @@ using LMS.Shared.DTOs;
 using LMS.Shared.DTOs.Activity;
 using LMS.Shared.DTOs.ActivityType;
 using LMS.Shared.DTOs.Course;
+using LMS.Shared.DTOs.Document;
 using LMS.Shared.DTOs.Module;
 
 
@@ -18,7 +19,16 @@ public class AutoMapperProfile : Profile
         CreateMap<CourseCreateDto, Course>().ReverseMap();
         CreateMap<CourseUpdateDto, Course>().ReverseMap();
         CreateMap<ModuleDto, Module>().ReverseMap();
+        CreateMap<ModuleCreateDto, Module>().ReverseMap();
+        CreateMap<ModuleUpdateDto, Module>().ReverseMap();
         CreateMap<ActivityDto, Activity>().ReverseMap();
+        CreateMap<ActivityCreateDto, Activity>().ReverseMap();
+        CreateMap<ActivityUpdateDto, Activity>().ReverseMap();
         CreateMap<ActivityTypeDto, ActivityType>().ReverseMap();
+        CreateMap<ActivityTypeCreateDto, ActivityType>().ReverseMap();
+        CreateMap<ActivityTypeUpdateDto, ActivityType>().ReverseMap();
+        CreateMap<DocumentDto, Document>().ReverseMap();
+        CreateMap<DocumentCreateDto, Document>().ReverseMap();
+        CreateMap<DocumentUpdateDto, Document>().ReverseMap();
     }
   }
