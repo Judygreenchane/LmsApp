@@ -30,14 +30,23 @@ namespace LMS.Infrastructure.Repositories
         //        .Include(c => c.Modules)
         //         .ToListAsync();
         //}
-        //public async Task<Course?> GetCourseByIdAsync(int courseId, bool trackChanges = false)
-        //{
-        //    return await
-        //        FindByCondition(c => c.Id.Equals(courseId), trackChanges)
-        //        .Include(c => c.Modules)
-        //        .ThenInclude(m => m.Activities)
-        //        .ThenInclude(a => a.ActivityType)
-        //        .FirstOrDefaultAsync();
-        //}
+        public async Task<Course?> getcoursebyidasync(int courseId, bool trackchanges = false)
+        {
+            return await
+                FindByCondition(c => c.Id.Equals(courseId), trackChanges)
+                .include(c => c.modules)
+                .theninclude(m => m.activities)
+                .theninclude(a => a.activitytype)
+                .firstordefaultasync();
+
+
+             public async Task<Course?> GetCourseByIdAsync(int courseId, bool trackChanges = false)
+        {
+            return await
+               
+
+                .FirstOrDefaultAsync();
+        }
+    }
     }
 }
