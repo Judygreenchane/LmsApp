@@ -54,19 +54,19 @@ namespace LMS.Infrastructure.Data
                         await CreateRolesAsync([studentRole]);
                     }
 
-                    if (!await context.Users.AnyAsync(u => userManager.IsInRoleAsync(u, adminRole).Result));
+                    if (!await context.Users.AnyAsync(u => userManager.IsInRoleAsync(u, adminRole).Result))
                     {
                         // Create admin user
                         await CreateAdminUserAsync();
                     }
 
-                    if (!await context.Users.AnyAsync(u => userManager.IsInRoleAsync(u, teacherRole).Result));
+                    if (!await context.Users.AnyAsync(u => userManager.IsInRoleAsync(u, teacherRole).Result))
                     {
                         // Generate teachers
                         await GenerateUsersAsync(2, teacherRole);
                     }
 
-                    if (!await context.Users.AnyAsync(u => userManager.IsInRoleAsync(u, studentRole).Result));
+                    if (!await context.Users.AnyAsync(u => userManager.IsInRoleAsync(u, studentRole).Result))
                     {
                         // Generate teachers
                         await GenerateUsersAsync(5, studentRole);

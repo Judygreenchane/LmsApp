@@ -1,5 +1,6 @@
 ﻿using LMS.Shared.DTOs.Activity;
 using LMS.Shared.DTOs.BaseDtos;
+using LMS.Shared.DTOs.Document;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;

@@ -1,4 +1,6 @@
-﻿using LMS.Shared.DTOs.BaseDtos;
+﻿using LMS.Shared.DTOs.ActivityType;
+using LMS.Shared.DTOs.BaseDtos;
+using LMS.Shared.DTOs.Module;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -18,5 +20,7 @@ namespace LMS.Shared.DTOs.Activity
 
         [Required]
         public DateTime EndTime { get; init; }
+        public ActivityTypeDto ActivityType { get; set; }
+        public ModuleDto Module { get; set; }
     }
 }
