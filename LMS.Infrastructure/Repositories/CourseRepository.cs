@@ -24,20 +24,16 @@ namespace LMS.Infrastructure.Repositories
 
             return base.FindAll(trackChanges);
         }
-        //public async Task<List<Course>> GetAllCoursesAsync(bool trackChanges = false)
-        //{
-        //   return await FindAll(trackChanges)
-        //       .Include(c=> c.Modules)
-        //        .ToListAsync();
-        //}
-        //public async Task<Course?> GetCourseByIdAsync(int courseId, bool trackChanges = false)
-        //{
-        //    return await
-        //        FindByCondition(c => c.CourseId.Equals(courseId), trackChanges)
-        //        .Include(c => c.Modules)
-        //        .ThenInclude(m => m.Activities)
-        //        .ThenInclude(a => a.ActivityType)
-        //        .FirstOrDefaultAsync();
-        //}
+
+        public async Task<Course?> FindByIdAsync(int Id,bool includeModules = false, bool includeDocuments = false, bool trackChanges = false)
+        {
+            if (includeModules && includeDocuments) return await base.FindAll(trackChanges).Include(m => m.Modules).Include(m => m.Documents).FirstOrDefaultAsync(c => c.Id == Id);
+
+            if (includeModules) return await base.FindAll(trackChanges).Include(m => m.Modules).FirstOrDefaultAsync(c => c.Id == Id);
+
+            if (includeDocuments) return await base.FindAll(trackChanges).Include(m => m.Documents).FirstOrDefaultAsync(c => c.Id == Id);
+
+            return await base.FindByIdAsync(Id);
+        }
     }
 }

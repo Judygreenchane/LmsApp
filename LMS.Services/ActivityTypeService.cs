@@ -18,6 +18,16 @@ namespace LMS.Services
             this.mapper = mapper;
         }
 
+        public async Task<bool> AnyAsync()
+        {
+            return await uow.ActivityTypeRepository.AnyAsync();
+        }
+
+        public async Task<bool> AnyAsync(int Id)
+        {
+            return await uow.ActivityTypeRepository.AnyAsync(Id);
+        }
+
         public async Task<ActivityTypeDto> CreateAsync(ActivityTypeCreateDto dto)
         {
             ActivityType activityType = mapper.Map<ActivityType>(dto);

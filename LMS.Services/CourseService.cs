@@ -26,9 +26,9 @@ namespace LMS.Services
             var courses = _uow.CourseRepository.FindAll(includeModules, includeDocuments, trackChanges);
             return _mapper.Map<IEnumerable<CourseDto>>(courses);
         }
-        public async Task<CourseDto> GetCourseByIdAsync(int courseId)
+        public async Task<CourseDto> GetCourseByIdAsync(int courseId, bool includeModules = false, bool includeDocuments = false, bool trackChanges = false)
         {
-            Course? course = await _uow.CourseRepository.FindByIdAsync(courseId);
+            Course? course = await _uow.CourseRepository.FindByIdAsync(courseId, includeModules, includeDocuments, trackChanges);
             if (course == null)
             {
                 //Todo
@@ -64,6 +64,11 @@ namespace LMS.Services
             _uow.CourseRepository.Delete(courseToDelete);
 
             await _uow.CompleteAsync();
+        }
+
+        public Task<CourseDto> GetCourseByIdAsync(int courseId)
+        {
+            throw new NotImplementedException();
         }
     }
 }

@@ -24,6 +24,16 @@ namespace LMS.Services
             this.mapper = mapper;
         }
 
+        public async Task<bool> AnyAsync()
+        {
+            return await uow.ModuleRepository.AnyAsync();
+        }
+
+        public async Task<bool> AnyAsync(int Id)
+        {
+            return await uow.ModuleRepository.AnyAsync(Id);
+        }
+
         public async Task<ModuleDto> CreateAsync(ModuleCreateDto dto)
         {
             Module module = mapper.Map<Module>(dto);
