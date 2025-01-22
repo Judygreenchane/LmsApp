@@ -10,5 +10,6 @@ namespace Services.Contracts
     public interface IActivityService : IServiceBase<ActivityDto, ActivityCreateDto, ActivityUpdateDto>
     {
         IEnumerable<ActivityDto> FindAll(bool includeDocuments = false, bool trackChanges = false);
+        Task<ActivityDto> FindByIdAsync(int Id, bool includeDocuments = false, bool trackChanges = false);
     }
 }

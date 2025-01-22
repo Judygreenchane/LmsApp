@@ -22,6 +22,12 @@ namespace LMS.Infrastructure.Repositories
 
             return base.FindAll(trackChanges);
         }
+        public async Task<Activity?> FindByIdAsync(int Id, bool includeDocuments = false, bool trackChanges = false)
+        {
+            if(includeDocuments)return await base.FindAll(trackChanges).Include(m => m.Documents).FirstOrDefaultAsync(a => a.Id == Id);
+
+            return await base.FindByIdAsync(Id);
+        }
 
     }
 }

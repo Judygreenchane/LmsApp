@@ -2,6 +2,7 @@
 using Domain.Contracts;
 using Domain.Models.Entities;
 using LMS.Shared.DTOs.ActivityType;
+using LMS.Shared.DTOs.Document;
 using Microsoft.AspNetCore.JsonPatch;
 using Services.Contracts;
 
@@ -46,13 +47,18 @@ namespace LMS.Services
 
             await uow.CompleteAsync();
         }
-
-        public IEnumerable<ActivityTypeDto> FindAll(bool trackChanges = false)
+        public IEnumerable<ActivityTypeDto> FindAll(bool includeActivities = false, bool trackChanges = false)
         {
-            var activityTypes = uow.ActivityTypeRepository.FindAll(trackChanges);
+            var activityTypes = uow.ActivityTypeRepository.FindAll(includeActivities, trackChanges);
             return mapper.Map<IEnumerable<ActivityTypeDto>>(activityTypes);
         }
 
+        public async Task<ActivityTypeDto> FindByIdAsync(int Id, bool includeActivities = false, bool trackChanges = false)
+        {
+            ActivityType? activityType = await uow.ActivityTypeRepository.FindByIdAsync(Id, includeActivities, trackChanges);
+            return activityType == null 
+                ? throw new KeyNotFoundException($"activityType with id: {Id} not found") : mapper.Map<ActivityTypeDto>(activityType);
+        }
         public async Task<ActivityTypeDto> FindByIdAsync(int Id)
         {
             ActivityType? activityType = await uow.ActivityTypeRepository.FindByIdAsync(Id);

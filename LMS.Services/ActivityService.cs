@@ -53,10 +53,17 @@ namespace LMS.Services
             return mapper.Map<IEnumerable<ActivityDto>>(activitys);
         }
 
+        public async Task<ActivityDto> FindByIdAsync(int Id, bool includeDocuments = false, bool trackChanges = false)
+        {
+            Activity? activity = await uow.ActivityRepository.FindByIdAsync(Id, includeDocuments, trackChanges);
+            return activity == null 
+                ? throw new KeyNotFoundException($"activity with id: {Id} not found") : mapper.Map<ActivityDto>(activity);
+        }
+
         public async Task<ActivityDto> FindByIdAsync(int Id)
         {
             Activity? activity = await uow.ActivityRepository.FindByIdAsync(Id);
-            return activity == null 
+            return activity == null
                 ? throw new KeyNotFoundException($"activity with id: {Id} not found") : mapper.Map<ActivityDto>(activity);
         }
 

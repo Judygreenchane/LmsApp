@@ -10,5 +10,6 @@ namespace Domain.Contracts
     public interface IActivityRepository : IRepositoryBase<Activity>
     {
         IQueryable<Activity> FindAll(bool includeDocuments = false, bool trackChanges = false);
+        Task<Activity?> FindByIdAsync(int Id,bool includeDocuments = false, bool trackChanges = false);
     }
 }
