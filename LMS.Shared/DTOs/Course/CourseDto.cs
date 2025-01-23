@@ -15,7 +15,7 @@ namespace LMS.Shared.DTOs.Course
         public string Description { get; set; }
         public DateTime StartDate { get; set; }
         public DateTime EndDate { get; set; }
-        public List<DocumentDto> Documents { get; init; }
+        public List<DocumentInCollectionDto> Documents { get; init; }
         public List<ModuleDto>? Modules { get; set; }
     }
 }

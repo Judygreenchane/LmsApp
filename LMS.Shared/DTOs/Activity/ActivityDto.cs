@@ -17,6 +17,6 @@ namespace LMS.Shared.DTOs.Activity
         public DateTime EndTime { get; set; }
         public ActivityTypeDto ActivityType { get; set; }
         public ModuleDto Module { get; set; }
-        public List<DocumentDto> Documents { get; init; }
+        public List<DocumentInCollectionDto> Documents { get; init; }
     }
 }
