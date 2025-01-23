@@ -2,7 +2,7 @@
 using Domain.Contracts;
 using Domain.Models.Entities;
 using LMS.Shared.DTOs.Course;
-using LMS.Shared.DTOs.Module;
+using LMS.Shared.DTOs.Course;
 using Microsoft.AspNetCore.JsonPatch;
 using Services.Contracts;
 using System;
@@ -15,60 +15,76 @@ namespace LMS.Services
 {
     public class CourseService : ICourseService
     {
-        private readonly IUnitOfWork _uow;
-        private readonly IMapper _mapper;
+        private readonly IUnitOfWork uow;
+        private readonly IMapper mapper;
+
         public CourseService(IUnitOfWork uow, IMapper mapper)
         {
-            _uow = uow;
-            _mapper = mapper;
+            this.uow = uow;
+            this.mapper = mapper;
         }
-        public IEnumerable<CourseDto> GetAllCourses(bool includeModules = false, bool includeDocuments = false, bool trackChanges = false)
+
+        public async Task<bool> AnyAsync()
         {
-            var courses = _uow.CourseRepository.FindAll(includeModules, includeDocuments, trackChanges);
-            return _mapper.Map<IEnumerable<CourseDto>>(courses);
+            return await uow.CourseRepository.AnyAsync();
         }
-        public async Task<CourseDto> GetCourseByIdAsync(int id, bool includeModules = false, bool includeDocuments = false, bool trackChanges = false)
+
+        public async Task<bool> AnyAsync(int Id)
         {
-            Course? course = await _uow.CourseRepository.FindByIdAsync(id, includeModules, includeDocuments, trackChanges);
+            return await uow.CourseRepository.AnyAsync(Id);
+        }
+
+        public async Task<CourseDto> CreateAsync(CourseCreateDto dto)
+        {
+            Course course = mapper.Map<Course>(dto);
+
+            uow.CourseRepository.Create(course);
+            await uow.CompleteAsync();
+
+            return mapper.Map<CourseDto>(course);
+        }
+
+        public async Task DeleteAsync(int id)
+        {
+            Course? courseToDelete = await uow.CourseRepository.FindByIdAsync(id)
+                ?? throw new KeyNotFoundException($"Course with id: {id} not found.");
+            uow.CourseRepository.Delete(courseToDelete);
+
+            await uow.CompleteAsync();
+        }
+
+        public IEnumerable<CourseDto> FindAll(bool includemodules = false, bool includeDocuments = false, bool trackChanges = false)
+        {
+            var courses = uow.CourseRepository.FindAll(includemodules, includeDocuments, trackChanges);
+            return mapper.Map<IEnumerable<CourseDto>>(courses);
+        }
+
+        public async Task<CourseDto> FindByIdAsync(int Id)
+        {
+            Course? course = await uow.CourseRepository.FindByIdAsync(Id);
             return course == null
-                ? throw new KeyNotFoundException($"course with id: {id} not found") : _mapper.Map<CourseDto>(course);
+                ? throw new KeyNotFoundException($"course with id: {Id} not found") : mapper.Map<CourseDto>(course);
         }
-        public async Task<CourseDto> CreateCourseAsync(CourseCreateDto dto)
+
+        public async Task<CourseDto> FindByIdAsync(int Id, bool includemodules = false, bool includeDocuments = false, bool trackChanges = false)
         {
-            Course course = _mapper.Map<Course>(dto);
-
-            _uow.CourseRepository.Create(course);
-
-            await _uow.CompleteAsync();
-
-            return _mapper.Map<CourseDto>(course);
+            Course? course = await uow.CourseRepository.FindByIdAsync(Id, includemodules, includeDocuments, trackChanges);
+            return course == null
+                ? throw new KeyNotFoundException($"course with id: {Id} not found") : mapper.Map<CourseDto>(course);
         }
-        public async Task<CourseDto> UpdateCourseAsync(int id, JsonPatchDocument<CourseUpdateDto> patchDocument)
+
+        public async Task<CourseDto> UpdateAsync(int id, JsonPatchDocument<CourseUpdateDto> patchDocument)
         {
-            var courseToPatch = await _uow.CourseRepository.FindByIdAsync(id) ?? throw new KeyNotFoundException($"{id} not found.");
-            var course = _mapper.Map<CourseUpdateDto>(courseToPatch);
+            var courseToPatch = await uow.CourseRepository.FindByIdAsync(id)
+                ?? throw new KeyNotFoundException($"{id} not found.");
+            var course = mapper.Map<CourseUpdateDto>(courseToPatch);
             patchDocument.ApplyTo(course);
 
-            _mapper.Map(course, courseToPatch);
-            await _uow.CompleteAsync();
+            mapper.Map(course, courseToPatch);
+            await uow.CompleteAsync();
 
-            return _mapper.Map<CourseDto>(courseToPatch);
+            return mapper.Map<CourseDto>(courseToPatch);
         }
 
-        public async Task DeleteCourseAsync(int id)
-        {
-            var courseToDelete = await _uow.CourseRepository.FindByIdAsync(id) 
-                ?? throw new KeyNotFoundException($"{id} not found.");
-            _uow.CourseRepository.Delete(courseToDelete);
-
-            await _uow.CompleteAsync();
-        }
-
-        public async Task<CourseDto> GetCourseByIdAsync(int id)
-        {
-            Course? course = await _uow.CourseRepository.FindByIdAsync(id);
-            return course == null
-                ? throw new KeyNotFoundException($"course with id: {id} not found") : _mapper.Map<CourseDto>(course);
-        }
     }
 }

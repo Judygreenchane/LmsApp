@@ -3,12 +3,7 @@ using Microsoft.AspNetCore.JsonPatch;
 
 namespace Services.Contracts
 {
-    public interface ICourseService // todo, implement base interface
+    public interface ICourseService : IServiceWithCollection<CourseDto, CourseCreateDto, CourseUpdateDto>
     {
-        Task<CourseDto> CreateCourseAsync(CourseCreateDto dto);
-        Task DeleteCourseAsync(int id);
-        IEnumerable<CourseDto> GetAllCourses(bool includeModules = false, bool includeDocuments = false, bool trackChanges = false);
-        Task<CourseDto> GetCourseByIdAsync(int courseId);
-        Task<CourseDto> UpdateCourseAsync(int id, JsonPatchDocument<CourseUpdateDto> patchDocument);
     }
 }
