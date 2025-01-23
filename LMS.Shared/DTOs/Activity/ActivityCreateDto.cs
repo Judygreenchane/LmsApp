@@ -1,22 +1,26 @@
 ﻿using LMS.Shared.DTOs.ActivityType;
 using LMS.Shared.DTOs.BaseDtos;
-using LMS.Shared.DTOs.Document;
 using LMS.Shared.DTOs.Module;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace LMS.Shared.DTOs.Activity
 {
-    public record ActivityDto : BaseDto
+    public record ActivityCreateDto : BaseCreateDto
     {
-        public string Description { get; set; }
-        public DateTime StartTime { get; set; }
-        public DateTime EndTime { get; set; }
+        [Required]
+        public string Description { get; init; }
+
+        [Required]
+        public DateTime StartTime { get; init; }
+
+        [Required]
+        public DateTime EndTime { get; init; }
         public ActivityTypeDto ActivityType { get; set; }
         public ModuleDto Module { get; set; }
-        public List<DocumentInCollectionDto> Documents { get; init; }
     }
 }

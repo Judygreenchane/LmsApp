@@ -12,7 +12,7 @@ using Microsoft.AspNetCore.JsonPatch;
 
 namespace LMS.Presemtation.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/course")]
     [ApiController]
     public class CourseController : ControllerBase
     {
@@ -22,27 +22,40 @@ namespace LMS.Presemtation.Controllers
             _serviceManager = serviceManager;
         }
         [HttpGet("{id}")]
-        public async Task<ActionResult<CourseDto>> GetOneCourse(int id)
+        public async Task<ActionResult<CourseDto>> GetOneCourse(int id, bool includeModules = false, bool includeDocuments = false, bool trackChanges = false)
         {
-            
-            var courseDto = await _serviceManager.CourseService.GetCourseByIdAsync(id);
+            if (!await _serviceManager.CourseService.AnyAsync(id))
+            {
+                return NotFound($"There is no course with id: {id}");
+            }
+
+            var courseDto = await _serviceManager.CourseService.FindByIdAsync(id, includeModules, includeDocuments, trackChanges);
             return Ok(courseDto);
         }
-        [HttpGet("courselist")]
-        public async Task<ActionResult<IEnumerable<CourseDto>>> GetAllCourses()
+        [HttpGet()]
+        public async Task<ActionResult<IEnumerable<CourseDto>>> GetAllCourses(bool includeModules = false, bool includeDocuments = false, bool trackChanges = false)
         {
-            var courseDtos = _serviceManager.CourseService.GetAllCourses(); //ToDo:  Async or not async method
+            if (!await _serviceManager.CourseService.AnyAsync())
+            {
+                return NotFound($"There is no courses");
+            }
+            var courseDtos = _serviceManager.CourseService.FindAll(includeModules, includeDocuments, trackChanges); //ToDo: Fix Call
             return Ok(courseDtos);
         }
-        [HttpPost("createcourse")]
+        [HttpPost()]
         public async Task<ActionResult> CreateCourse(CourseCreateDto dto)
         {
-            var createdCourseDto = await _serviceManager.CourseService.CreateCourseAsync(dto);
+            var createdCourseDto = await _serviceManager.CourseService.CreateAsync(dto);
             return Created();
         }
         [HttpPatch("{id}")]
         public async Task<ActionResult> PatchCourse(int id, JsonPatchDocument<CourseUpdateDto> patchDocument)
         {
+            if (!await _serviceManager.CourseService.AnyAsync(id))
+            {
+                return NotFound($"There is no course with id: {id}");
+            }
+
             if (patchDocument is null) return BadRequest();
 
             var courseToPatch = new CourseUpdateDto();
@@ -50,14 +63,19 @@ namespace LMS.Presemtation.Controllers
 
             if (!ModelState.IsValid) return UnprocessableEntity(ModelState);
 
-            var changedCourse = await _serviceManager.CourseService.UpdateCourseAsync(id, patchDocument);
+            var changedCourse = await _serviceManager.CourseService.UpdateAsync(id, patchDocument);
 
             return Ok(changedCourse);
         }
         [HttpDelete("{id}")]
         public async Task<ActionResult> DeleteCourse(int id)
         {
-            await _serviceManager.CourseService.DeleteCourseAsync(id);
+            if (!await _serviceManager.CourseService.AnyAsync(id))
+            {
+                return NotFound($"There is no course with id: {id}");
+            }
+
+            await _serviceManager.CourseService.DeleteAsync(id);
             return NoContent();
         }
 

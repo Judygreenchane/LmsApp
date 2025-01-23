@@ -10,13 +10,11 @@ using System.Threading.Tasks;
 
 namespace LMS.Shared.DTOs.Activity
 {
-    public record ActivityDto : BaseDto
+    public record ActivityForActivityTypeDto : BaseDto
     {
         public string Description { get; set; }
         public DateTime StartTime { get; set; }
         public DateTime EndTime { get; set; }
-        public ActivityTypeDto ActivityType { get; set; }
-        public ModuleDto Module { get; set; }
-        public List<DocumentInCollectionDto> Documents { get; init; }
+        public int ModuleId { get; set; }
     }
 }
