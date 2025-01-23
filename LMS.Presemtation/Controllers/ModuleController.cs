@@ -22,13 +22,13 @@ namespace LMS.Presemtation.Controllers
             _serviceManager = serviceManager;
         }
         [HttpGet("{id}")]
-        public async Task<ActionResult<ModuleDto>> GetModule(int Id, bool includeActivities = false, bool includeDocuments = false, bool trackChanges = false)
+        public async Task<ActionResult<ModuleDto>> GetModule(int id, bool includeActivities = false, bool includeDocuments = false, bool trackChanges = false)
         {
-            if (!await _serviceManager.ModuleService.AnyAsync(Id))
+            if (!await _serviceManager.ModuleService.AnyAsync(id))
             {
-                return NotFound($"There is no module with id: {Id}");
+                return NotFound($"There is no module with id: {id}");
             }
-            var courseDto = await _serviceManager.ModuleService.FindByIdAsync(Id, includeActivities, includeDocuments, trackChanges);
+            var courseDto = await _serviceManager.ModuleService.FindByIdAsync(id, includeActivities, includeDocuments, trackChanges);
             return Ok(courseDto);
         }
         [HttpGet()]

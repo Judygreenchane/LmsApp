@@ -22,13 +22,13 @@ namespace LMS.Presemtation.Controllers
             _serviceManager = serviceManager;
         }
         [HttpGet("{id}")]
-        public async Task<ActionResult<ActivityDto>> GetActivity(int Id, bool includeDocuments = false, bool trackChanges = false)
+        public async Task<ActionResult<ActivityDto>> GetActivity(int id, bool includeDocuments = false, bool trackChanges = false)
         {
-            if (!await _serviceManager.ActivityService.AnyAsync(Id))
+            if (!await _serviceManager.ActivityService.AnyAsync(id))
             {
-                return NotFound($"There is no activity with id: {Id}");
+                return NotFound($"There is no activity with id: {id}");
             }
-            var courseDto = await _serviceManager.ActivityService.FindByIdAsync(Id, includeDocuments, trackChanges);
+            var courseDto = await _serviceManager.ActivityService.FindByIdAsync(id, includeDocuments, trackChanges);
             return Ok(courseDto);
         }
         [HttpGet()]

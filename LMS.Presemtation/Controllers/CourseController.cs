@@ -24,7 +24,11 @@ namespace LMS.Presemtation.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<CourseDto>> GetOneCourse(int id, bool includeModules = false, bool includeDocuments = false, bool trackChanges = false)
         {
-            
+            if (!await _serviceManager.CourseService.AnyAsync(id))
+            {
+                return NotFound($"There is no course with id: {id}");
+            }
+
             var courseDto = await _serviceManager.CourseService.FindByIdAsync(id, includeModules, includeDocuments, trackChanges);
             return Ok(courseDto);
         }
@@ -47,6 +51,11 @@ namespace LMS.Presemtation.Controllers
         [HttpPatch("{id}")]
         public async Task<ActionResult> PatchCourse(int id, JsonPatchDocument<CourseUpdateDto> patchDocument)
         {
+            if (!await _serviceManager.CourseService.AnyAsync(id))
+            {
+                return NotFound($"There is no course with id: {id}");
+            }
+
             if (patchDocument is null) return BadRequest();
 
             var courseToPatch = new CourseUpdateDto();
@@ -61,6 +70,11 @@ namespace LMS.Presemtation.Controllers
         [HttpDelete("{id}")]
         public async Task<ActionResult> DeleteCourse(int id)
         {
+            if (!await _serviceManager.CourseService.AnyAsync(id))
+            {
+                return NotFound($"There is no course with id: {id}");
+            }
+
             await _serviceManager.CourseService.DeleteAsync(id);
             return NoContent();
         }
