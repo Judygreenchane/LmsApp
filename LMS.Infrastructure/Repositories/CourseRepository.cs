@@ -51,7 +51,7 @@ namespace LMS.Infrastructure.Repositories
                             StartTime = a.StartTime,
                             EndTime = a.EndTime,
                             Module = m,
-                            Documents = c.Documents.Select(d => new Document
+                            Documents = a.Documents.Select(d => new Document
                             {
                                 Id = d.Id,
                                 Name = d.Name,
@@ -60,7 +60,7 @@ namespace LMS.Infrastructure.Repositories
                             }).ToList(),
 
                         }).ToList(),
-                        Documents = c.Documents.Select(d => new Document
+                        Documents = m.Documents.Select(d => new Document
                         {
                             Id = d.Id,
                             Name = d.Name,
@@ -98,22 +98,10 @@ namespace LMS.Infrastructure.Repositories
                             StartTime = a.StartTime,
                             EndTime = a.EndTime,
                             Module = m,
-                            Documents = c.Documents.Select(d => new Document
-                            {
-                                Id = d.Id,
-                                Name = d.Name,
-                                Description = d.Description,
-                                UploadTime = d.UploadTime,
-                            }).ToList(),
+                            Documents = a.Documents
 
                         }).ToList(),
-                        Documents = c.Documents.Select(d => new Document
-                        {
-                            Id = d.Id,
-                            Name = d.Name,
-                            Description = d.Description,
-                            UploadTime = d.UploadTime,
-                        }).ToList(),
+                        Documents = m.Documents
                     }
                     ).ToList()
                 });
@@ -175,7 +163,7 @@ namespace LMS.Infrastructure.Repositories
                             StartTime = a.StartTime,
                             EndTime = a.EndTime,
                             Module = m,
-                            Documents = c.Documents.Select(d => new Document
+                            Documents = a.Documents.Select(d => new Document
                             {
                                 Id = d.Id,
                                 Name = d.Name,
@@ -184,7 +172,7 @@ namespace LMS.Infrastructure.Repositories
                             }).ToList(),
                             
                         }).ToList(),
-                        Documents = c.Documents.Select(d => new Document
+                        Documents = m.Documents.Select(d => new Document
                         {
                             Id = d.Id,
                             Name = d.Name,
@@ -223,7 +211,7 @@ namespace LMS.Infrastructure.Repositories
                             StartTime = a.StartTime,
                             EndTime = a.EndTime,
                             Module = m,
-                            Documents = c.Documents.Select(d => new Document
+                            Documents = a.Documents.Select(d => new Document
                             {
                                 Id = d.Id,
                                 Name = d.Name,
@@ -232,7 +220,7 @@ namespace LMS.Infrastructure.Repositories
                             }).ToList(),
                             
                         }).ToList(),
-                        Documents = c.Documents.Select(d => new Document
+                        Documents = m.Documents.Select(d => new Document
                         {
                             Id = d.Id,
                             Name = d.Name,
