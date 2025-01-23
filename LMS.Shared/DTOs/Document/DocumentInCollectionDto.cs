@@ -15,6 +15,6 @@ namespace LMS.Shared.DTOs.Document
     {
         public string Description { get; set; }
         public DateTime UploadTime { get; set; }
-        public ApplicationUser User { get; set; }
+        //public int ApplicationUserId { get; set; }
     }
 }

@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace LMS.Shared.DTOs.BaseDtos
 {
-    public abstract record BaseUpdateDto
+    public abstract record BaseUpdateDto 
     {
         [Required]
         public string Name { get; init; }
