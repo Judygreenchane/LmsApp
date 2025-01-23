@@ -8,7 +8,7 @@
 
 @if (courses == null)
 {
-    <p>API not called yet</p>
+    <p>Loading....</p>
 }
 else
 {
@@ -72,7 +72,7 @@ else
                 if (_apiService != null)
                 {
                    // courses = (await _apiService.CallApiAsync<IEnumerable<CourseDto>>("Course/courselist"))?.ToList() ?? [];
-                    courses = (await _apiService.CallApiGetAsync<IEnumerable<CourseDto>>("course/courselist"))?.ToList() ?? [];
+                    courses = (await _apiService.CallApiGetAsync<IEnumerable<CourseDto>>("course"))?.ToList() ?? [];
                     StateHasChanged(); // Trigger UI update after fetching data
                 }
                 else
