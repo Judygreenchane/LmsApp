@@ -1,0 +1,82 @@
+﻿@page "/createcourse"
+@using System.ComponentModel.DataAnnotations
+@using System.Text
+@using System.Text.Encodings.Web
+@using LMS.Shared.DTOs.Course
+@using LMS.Shared.User
+@using LMS.Shared.DTOs
+@using Microsoft.AspNetCore.Identity
+
+
+
+
+@* @inject UserManager<ApplicationUser> UserManager *@
+
+@inject IHttpClientFactory HttpClientFactory
+
+<h3>CourseCreation</h3>
+
+<div class="row">
+    <div class="col-md-4">
+        <EditForm Model="Course" asp-route-returnUrl="@ReturnUrl" method="post" OnValidSubmit="CreateCourse" FormName="createcourse"> 
+ <div class="form-floating mb-3">
+                <InputText @bind-Value="Course.Name" class="form-control" autocomplete="Course" aria-required="true"  />
+            </div>  <div class="form-floating mb-3">
+                <InputText @bind-Value="Course.Description" class="form-control" autocomplete="Description" aria-required="true" />
+            </div>
+            <div class="form-floating mb-3">
+                <InputDate  @bind-Value="Course.StartDate" />
+              
+            </div>
+            <div class="form-floating mb-3">
+                <InputDate @bind-Value="Course.EndDate" />
+            </div>
+            <button type="submit" class="w-100 btn btn-lg btn-primary">Add</button>
+            </EditForm>
+       @*  
+           
+                
+                <label for="username">Username</label>
+               
+            </div> 
+           
+       *@
+           
+    </div>
+</div>
+
+
+
+
+
+@code {
+    [SupplyParameterFromForm]
+    private CourseDto Course { get; set; } = new();
+
+    [SupplyParameterFromQuery]
+    private string? ReturnUrl { get; set; }
+
+    private string? successMessage;
+
+    public async Task CreateCourse(EditContext editContext)
+    {
+        var httpClient = HttpClientFactory.CreateClient("LmsAPIClient");
+        var response = await httpClient.PostAsJsonAsync("api/Course/createcourse", new CourseDto
+            {
+                Name = Course.Name,
+                Description = Course.Description,
+                StartDate = Course.StartDate,
+                EndDate=Course.EndDate
+            });
+
+        if (!response.IsSuccessStatusCode)
+        {
+            return;
+        }
+        else
+        {
+            successMessage = "New user has been registered.";
+            return;
+        }
+    }
+}

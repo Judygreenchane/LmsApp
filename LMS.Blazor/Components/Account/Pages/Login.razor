@@ -1,73 +1,200 @@
 ﻿@page "/Account/Login"
-
 @using System.ComponentModel.DataAnnotations
 @using LMS.Blazor.Services
 @using LMS.Shared.DTOs
 @using LMS.Shared.User
+@using LMS.Blazor.Data
 @using Microsoft.AspNetCore.Authentication
 @using Microsoft.AspNetCore.Identity
 
 @inject SignInManager<ApplicationUser> SignInManager
+@inject UserManager<ApplicationUser> UserManager
 @inject ILogger<Login> Logger
 @inject NavigationManager NavigationManager
 @inject IdentityRedirectManager RedirectManager
-@inject UserManager<ApplicationUser> UserManager
-@inject IHttpClientFactory HttpClientFactory
+@inject AuthHttpService AuthService
 @inject ITokenStorage TokenStorage
 
-<PageTitle>Log in</PageTitle>
+<div class="login-page">
+    <div class="login-box">
+        <div class="brand-logo text-center mb-4">
+            <i class="bi bi-mortarboard-fill text-danger" style="font-size: 3rem;"></i>
+        </div>
+        
+        <div class="text-center mb-4">
+            <h1 class="welcome-text">Welcome</h1>
+            <p class="text-muted">Sign in to continue to Lexicon LMS</p>
+        </div>
 
-<h1>Log in</h1>
-<div class="row">
-    <div class="col-md-4">
-        <section>
-            <StatusMessage Message="@errorMessage" />
-            <EditForm Model="Input" method="post" OnValidSubmit="LoginUser" FormName="login">
-                <DataAnnotationsValidator />
-                <h2>Use a local account to log in.</h2>
-                <hr />
-                <ValidationSummary class="text-danger" role="alert" />
-                <div class="form-floating mb-3">
-                    <InputText @bind-Value="Input.Email" class="form-control" autocomplete="username" aria-required="true" placeholder="name@example.com" />
-                    <label for="email" class="form-label">Email</label>
-                    <ValidationMessage For="() => Input.Email" class="text-danger" />
+        @if (!string.IsNullOrEmpty(errorMessage))
+        {
+            <div class="alert custom-alert alert-danger d-flex align-items-center mb-4" role="alert">
+                <i class="bi bi-exclamation-circle me-2"></i>
+                <div>@errorMessage</div>
+                <button type="button" class="btn-close ms-auto" @onclick="@(() => errorMessage = null)"></button>
+            </div>
+        }
+
+        <EditForm Model="Input" OnValidSubmit="LoginUser" FormName="login">
+            <DataAnnotationsValidator />
+            
+            <div class="form-group mb-4">
+                <label class="form-label">Email address</label>
+                <div class="input-group">
+                    <span class="input-group-text bg-light">
+                        <i class="bi bi-envelope text-muted"></i>
+                    </span>
+                    <InputText @bind-Value="Input.Email" 
+                              class="form-control custom-input" 
+                              placeholder="Enter your email"
+                              autocomplete="username" />
                 </div>
-                <div class="form-floating mb-3">
-                    <InputText type="password" @bind-Value="Input.Password" class="form-control" autocomplete="current-password" aria-required="true" placeholder="password" />
-                    <label for="password" class="form-label">Password</label>
-                    <ValidationMessage For="() => Input.Password" class="text-danger" />
+                <ValidationMessage For="() => Input.Email" class="text-danger small mt-1" />
+            </div>
+
+            <div class="form-group mb-4">
+                <label class="form-label">Password</label>
+                <div class="input-group">
+                    <span class="input-group-text bg-light">
+                        <i class="bi bi-lock text-muted"></i>
+                    </span>
+                    <InputText type="password" 
+                              @bind-Value="Input.Password" 
+                              class="form-control custom-input" 
+                              placeholder="Enter your password"
+                              autocomplete="current-password" />
                 </div>
-                <div class="checkbox mb-3">
-                    <label class="form-label">
-                        <InputCheckbox @bind-Value="Input.RememberMe" class="darker-border-checkbox form-check-input" />
+                <ValidationMessage For="() => Input.Password" class="text-danger small mt-1" />
+            </div>
+
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div class="form-check">
+                    <InputCheckbox @bind-Value="Input.RememberMe" 
+                                 class="form-check-input custom-checkbox" 
+                                 id="rememberMe" />
+                    <label class="form-check-label user-select-none" for="rememberMe">
                         Remember me
                     </label>
                 </div>
-                <div>
-                    <button type="submit" class="w-100 btn btn-lg btn-primary">Log in</button>
-                </div>
-                <div>
-                    <p>
-                        <a href="Account/ForgotPassword">Forgot your password?</a>
-                    </p>
-                    <p>
-                        <a href="@(NavigationManager.GetUriWithQueryParameters("Account/Register", new Dictionary<string, object?> { ["ReturnUrl"] = ReturnUrl }))">Register as a new user</a>
-                    </p>
-                    <p>
-                        <a href="Account/ResendEmailConfirmation">Resend email confirmation</a>
-                    </p>
-                </div>
-            </EditForm>
-        </section>
-    </div>
-    <div class="col-md-6 col-md-offset-2">
-        <section>
-            <h3>Use another service to log in.</h3>
-            <hr />
-            <ExternalLoginPicker />
-        </section>
+                <a href="Account/ForgotPassword" class="text-danger text-decoration-none small">
+                    Forgot password?
+                </a>
+            </div>
+
+            <div>
+                <button type="submit" class="w-100 btn btn-lg btn-primary">Log in</button>
+            </div>
+        </EditForm>
     </div>
 </div>
+
+<style>
+    .login-page {
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+        padding: 1rem;
+    }
+
+    .login-box {
+        width: 100%;
+        max-width: 420px;
+        background: white;
+        padding: 2.5rem;
+        border-radius: 16px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+    }
+
+    .welcome-text {
+        font-size: 2rem;
+        font-weight: 600;
+        color: #dc3545;
+        margin-bottom: 0.5rem;
+    }
+
+    .custom-input {
+        border: 1px solid #dee2e6;
+        padding: 0.75rem;
+        font-size: 1rem;
+        transition: all 0.2s ease;
+    }
+
+    .custom-input:focus {
+        border-color: #dc3545;
+        box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25);
+    }
+
+    .input-group-text {
+        border: 1px solid #dee2e6;
+        border-right: none;
+        padding: 0.75rem;
+    }
+
+    .input-group .form-control {
+        border-left: none;
+    }
+
+    .custom-button {
+        padding: 0.75rem;
+        font-size: 1rem;
+        font-weight: 500;
+        transition: all 0.2s ease;
+    }
+
+    .custom-button:not(:disabled):hover {
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba(220, 53, 69, 0.2);
+    }
+
+    .custom-button:disabled {
+        background-color: #dc3545;
+        border-color: #dc3545;
+        opacity: 0.7;
+    }
+
+    .custom-checkbox {
+        width: 1.1rem;
+        height: 1.1rem;
+        border-radius: 4px;
+        cursor: pointer;
+    }
+
+    .custom-checkbox:checked {
+        background-color: #dc3545;
+        border-color: #dc3545;
+    }
+
+    .custom-checkbox:focus {
+        border-color: #dc3545;
+        box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25);
+    }
+
+    .custom-alert {
+        border-radius: 8px;
+        border: none;
+        background-color: #fff5f5;
+        color: #dc3545;
+        padding: 1rem;
+    }
+
+    .form-label {
+        font-weight: 500;
+        color: #495057;
+        margin-bottom: 0.5rem;
+    }
+
+    .brand-logo {
+        margin-bottom: 2rem;
+    }
+
+    .brand-logo i {
+        filter: drop-shadow(0 4px 6px rgba(220, 53, 69, 0.2));
+    }
+
+
+</style>
 
 @code {
     private string? errorMessage;
@@ -85,42 +212,27 @@
     {
         if (HttpMethods.IsGet(HttpContext.Request.Method))
         {
-            // Clear the existing external cookie to ensure a clean login process
             await HttpContext.SignOutAsync(IdentityConstants.ExternalScheme);
         }
     }
 
     public async Task LoginUser()
     {
-        // This doesn't count login failures towards account lockout
-        // To enable password failures to trigger account lockout, set lockoutOnFailure: true
+        var (success, error, tokens) = await AuthService.LoginAsync(Input.Email, Input.Password);
 
-        //ToDo: Handle login with username instead to not require geting the User from Database
-        ApplicationUser? user = await UserManager.FindByEmailAsync(Input.Email);
-        if (user == null)
+        if (!success)
         {
-            errorMessage = "Failed to login please try again.";
+            errorMessage = error;
             return;
         }
 
-        //ToDo: make service of API call to remote server (LMS.API)!
-        var tokens = await GetTokensFromApi(user.UserName!, Input.Password);
+        var result = await SignInManager.PasswordSignInAsync(Input.Email, Input.Password,
+            Input.RememberMe, lockoutOnFailure: false);
 
-        if (tokens == null)
-        {
-            errorMessage = "Failed to login please try again.";
-            return;
-        }
-
-        var result = await SignInManager.PasswordSignInAsync(user, Input.Password, Input.RememberMe, lockoutOnFailure: false);
         if (result.Succeeded)
         {
-            await TokenStorage.StoreTokensAsync(user.Id, tokens);
-
             Logger.LogInformation("User logged in.");
             RedirectManager.RedirectTo(ReturnUrl);
-
-
         }
         else if (result.RequiresTwoFactor)
         {
@@ -151,18 +263,5 @@
 
         [Display(Name = "Remember me?")]
         public bool RememberMe { get; set; }
-    }
-
-    private async Task<TokenDto?> GetTokensFromApi(string username, string password)
-    {
-        var httpClient = HttpClientFactory.CreateClient("LmsAPIClient");
-        var response = await httpClient.PostAsJsonAsync("api/auth/login", new UserForAuthDto(username, password));
-
-        if (!response.IsSuccessStatusCode)
-        {
-            return null;
-        }
-
-        return await response.Content.ReadFromJsonAsync<TokenDto>();
     }
 }

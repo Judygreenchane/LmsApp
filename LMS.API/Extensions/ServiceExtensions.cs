@@ -69,44 +69,49 @@ public static class ServiceExtensions
 
     public static void ConfigureJwt(this IServiceCollection services, IConfiguration configuration)
     {
-        var secretKey = configuration["secretkey"];
-        ArgumentNullException.ThrowIfNull(secretKey, nameof(secretKey));
+        // Get the secret key from configuration
+        var secretKey = configuration["secretKey"];
+        if (string.IsNullOrEmpty(secretKey))
+            throw new InvalidOperationException("JWT secret key is not configured");
 
-        var jwtSettings = configuration.GetSection("JwtSettings");
-        ArgumentNullException.ThrowIfNull(nameof(jwtSettings));
+        // Get JWT settings section
+        var jwtSettingsSection = configuration.GetSection("JwtSettings");
+        if (!jwtSettingsSection.Exists())
+            throw new InvalidOperationException("JwtSettings section is not configured");
 
+        // Bind JWT settings to configuration object
         var jwtConfig = new JwtConfiguration();
-        jwtSettings.Bind(jwtConfig);
+        jwtSettingsSection.Bind(jwtConfig);
+        jwtConfig.SecretKey = secretKey;
 
+        // Configure JwtConfiguration as a service
         services.Configure<JwtConfiguration>(options =>
         {
+            options.SecretKey = secretKey;
             options.Issuer = jwtConfig.Issuer;
             options.Audience = jwtConfig.Audience;
             options.Expires = jwtConfig.Expires;
-            options.SecretKey = secretKey;
         });
 
-
+        // Configure JWT authentication
         services.AddAuthentication(options =>
         {
             options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
             options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
         })
-               .AddJwtBearer(options =>
-               {
-
-                   options.TokenValidationParameters = new TokenValidationParameters
-                   {
-                       ValidateIssuer = true,
-                       ValidateAudience = true,
-                       ValidateIssuerSigningKey = true,
-                       ValidateLifetime = true,
-                       ValidIssuer = jwtSettings["Issuer"],
-                       ValidAudience = jwtSettings["Audience"],
-                       IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey))
-
-                   };
-               });
+        .AddJwtBearer(options =>
+        {
+            options.TokenValidationParameters = new TokenValidationParameters
+            {
+                ValidateIssuer = true,
+                ValidateAudience = true,
+                ValidateLifetime = true,
+                ValidateIssuerSigningKey = true,
+                ValidIssuer = jwtConfig.Issuer,
+                ValidAudience = jwtConfig.Audience,
+                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey))
+            };
+        });
     }
 }
 

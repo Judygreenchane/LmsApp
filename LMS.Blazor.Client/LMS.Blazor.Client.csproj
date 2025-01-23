@@ -9,6 +9,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Blazored.LocalStorage" Version="4.5.0" />
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="8.0.2" />
     <PackageReference Include="microsoft.aspnetcore.components.webassembly.authentication" Version="8.0.6" />
     <PackageReference Include="Microsoft.Extensions.Http" Version="8.0.1" />
@@ -17,6 +18,10 @@
 
   <ItemGroup>
     <ProjectReference Include="..\LMS.Shared\LMS.Shared.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Components\" />
   </ItemGroup>
 
 </Project>
