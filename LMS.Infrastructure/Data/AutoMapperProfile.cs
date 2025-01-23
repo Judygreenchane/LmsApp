@@ -22,6 +22,8 @@ public class AutoMapperProfile : Profile
         CreateMap<ModuleCreateDto, Module>().ReverseMap();
         CreateMap<ModuleUpdateDto, Module>().ReverseMap();
         CreateMap<ActivityDto, Activity>().ReverseMap();
+        CreateMap<ActivityInCollectionDto, Activity>().ReverseMap();
+        CreateMap<ActivityForActivityTypeDto, Activity>().ReverseMap();
         CreateMap<ActivityCreateDto, Activity>().ReverseMap();
         CreateMap<ActivityUpdateDto, Activity>().ReverseMap();
         CreateMap<ActivityTypeDto, ActivityType>().ReverseMap();

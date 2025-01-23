@@ -5,7 +5,7 @@ namespace LMS.Shared.DTOs.ActivityType
 {
     public record ActivityTypeDto : BaseDto
     {
-        public ICollection<ActivityDto>? Activities { get; set; }
+        public ICollection<ActivityForActivityTypeDto>? Activities { get; set; }
 
     }
 }
