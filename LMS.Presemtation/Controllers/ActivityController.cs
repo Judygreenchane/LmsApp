@@ -28,8 +28,8 @@ namespace LMS.Presemtation.Controllers
             {
                 return NotFound($"There is no activity with id: {id}");
             }
-            var courseDto = await _serviceManager.ActivityService.FindByIdAsync(id, includeDocuments, trackChanges);
-            return Ok(courseDto);
+            var activityDto = await _serviceManager.ActivityService.FindByIdAsync(id, includeDocuments, trackChanges);
+            return Ok(activityDto);
         }
         [HttpGet()]
         public async Task<ActionResult<IEnumerable<ActivityDto>>> GetActivitiesAsync(bool includeDocuments = false, bool trackChanges = false)
@@ -38,8 +38,8 @@ namespace LMS.Presemtation.Controllers
             {
                 return NotFound($"There are no activitys");
             }
-            var courseDtos = _serviceManager.ActivityService.FindAll(includeDocuments, trackChanges);
-            return Ok(courseDtos);
+            var activityDtos = _serviceManager.ActivityService.FindAll(includeDocuments, trackChanges);
+            return Ok(activityDtos);
         }
         [HttpPost()]
         public async Task<ActionResult> CreateActivityAsync(ActivityCreateDto dto)

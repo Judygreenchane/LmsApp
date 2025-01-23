@@ -17,7 +17,10 @@ namespace LMS.Shared.DTOs.Document
         public DateTime UploadTime { get; set; }
         public ApplicationUser User { get; set; }
         public CourseDto? Course { get; set; }
+        public int? CourseId { get; set; }
         public ModuleDto? Module { get; set; }
+        public int? ModuleId { get; set; }
         public ActivityDto? Activity { get; set; }
+        public int? ActivityId { get; set; }
     }
 }

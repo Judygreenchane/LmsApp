@@ -29,13 +29,13 @@ namespace LMS.Infrastructure.Repositories
 
         public async Task<Module?> FindByIdAsync(int Id, bool includeActivities = false, bool includeDocuments = false, bool trackChanges = false)
         {
-            if (includeActivities && includeDocuments) return await base.FindAll(trackChanges).Include(m => m.Activities).Include(m => m.Documents).FirstOrDefaultAsync(m => m.Id == Id);
+            if (includeActivities && includeDocuments) return await base.FindAll(trackChanges).Include(m => m.Course).Include(m => m.Activities).Include(m => m.Documents).FirstOrDefaultAsync(m => m.Id == Id);
 
-            if (includeActivities) return await base.FindAll(trackChanges).Include(m => m.Activities).FirstOrDefaultAsync(m => m.Id == Id);
+            if (includeActivities) return await base.FindAll(trackChanges).Include(m => m.Course).Include(m => m.Activities).FirstOrDefaultAsync(m => m.Id == Id);
 
-            if (includeDocuments) return await base.FindAll(trackChanges).Include(m => m.Documents).FirstOrDefaultAsync(m => m.Id == Id);
+            if (includeDocuments) return await base.FindAll(trackChanges).Include(m => m.Course).Include(m => m.Documents).FirstOrDefaultAsync(m => m.Id == Id);
 
-            return await base.FindByIdAsync(Id);
+            return await base.FindAll(trackChanges).Include(m => m.Course).FirstOrDefaultAsync(m => m.Id == Id);
         }
     }
 }

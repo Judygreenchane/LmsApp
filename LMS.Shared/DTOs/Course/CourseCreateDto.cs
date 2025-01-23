@@ -1,4 +1,5 @@
 ﻿using LMS.Shared.DTOs.BaseDtos;
+using LMS.Shared.DTOs.Document;
 using LMS.Shared.DTOs.Module;
 using System;
 using System.Collections.Generic;
@@ -20,6 +21,7 @@ namespace LMS.Shared.DTOs.Course
         [Required]
         public DateTime EndDate { get; init; }
 
-       public List<ModuleCreateDto> Modules { get; init; }
+       public List<ModuleCreateDto>? Modules { get; init; }
+        public List<DocumentCreateDto>? Documents { get; set; }
     }
 }

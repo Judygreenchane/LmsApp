@@ -18,16 +18,16 @@ namespace LMS.Infrastructure.Repositories
         {
             if (includeModules && includeDocuments) return base.FindAll(trackChanges).Include(m => m.Modules).Include(m => m.Documents);
 
-            if (includeModules) return base.FindAll(trackChanges).Include(m => m.Modules);
+            if (includeModules) return base.FindAll(trackChanges).Include(c => c.Modules);
 
-            if (includeDocuments) return base.FindAll(trackChanges).Include(m => m.Documents);
+            if (includeDocuments) return base.FindAll(trackChanges).Include(c => c.Documents);
 
             return base.FindAll(trackChanges);
         }
 
         public async Task<Course?> FindByIdAsync(int Id,bool includeModules = false, bool includeDocuments = false, bool trackChanges = false)
         {
-            if (includeModules && includeDocuments) return await base.FindAll(trackChanges).Include(m => m.Modules).Include(m => m.Documents).FirstOrDefaultAsync(c => c.Id == Id);
+            if (includeModules && includeDocuments) return await base.FindAll(trackChanges).Include(c => c.Modules).Include(c => c.Documents).FirstOrDefaultAsync(c => c.Id == Id);
 
             if (includeModules) return await base.FindAll(trackChanges).Include(m => m.Modules).FirstOrDefaultAsync(c => c.Id == Id);
 
