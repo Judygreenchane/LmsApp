@@ -9,6 +9,7 @@ using Domain.Models.Entities;
 using LMS.Shared.DTOs.Course;
 using Services.Contracts;
 using Microsoft.AspNetCore.JsonPatch;
+using System.Security.Claims;
 
 namespace LMS.Presemtation.Controllers
 {
@@ -22,7 +23,8 @@ namespace LMS.Presemtation.Controllers
             _serviceManager = serviceManager;
         }
         [HttpGet("{id}")]
-        public async Task<ActionResult<CourseDto>> GetOneCourse(int id, bool includeCourses = false, bool includeDocuments = false, bool trackChanges = false)
+
+        public async Task<ActionResult<CourseDto>> GetOneCourse([FromBody] int id, bool includeModules = false, bool includeDocuments = false, bool trackChanges = false)
         {
             if (!await _serviceManager.CourseService.AnyAsync(id))
             {
@@ -91,6 +93,15 @@ namespace LMS.Presemtation.Controllers
 
             await _serviceManager.CourseService.DeleteAsync(id);
             return NoContent();
+        }
+        [HttpGet("user")]
+        public async Task<ActionResult<CourseDto>> GetCourseForSpecificUser()
+        {
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (userId == null) return Unauthorized();
+
+            var courseDto = await _serviceManager.CourseService.GetCourseByUserIdAsync(userId);
+            return Ok(courseDto);
         }
 
     }

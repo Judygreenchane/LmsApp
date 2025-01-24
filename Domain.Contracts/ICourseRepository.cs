@@ -9,5 +9,6 @@ namespace Domain.Contracts
 {
     public interface ICourseRepository : IRepositoryWithCollections<Course>
     {
+        Task<Course?> GetCourseByUserIdAsync(string userId, bool trackChanges = false);
     }
 }
