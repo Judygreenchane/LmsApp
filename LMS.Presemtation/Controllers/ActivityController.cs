@@ -64,6 +64,25 @@ namespace LMS.Presemtation.Controllers
 
             return Ok(changedActivity);
         }
+
+        [HttpPut("{id}")]
+        public async Task<ActionResult> PutActivityAsync(int id, ActivityUpdateDto dto)
+        {
+            if (dto == null)
+            {
+                return BadRequest("No Input found");
+            }
+
+            if (!await _serviceManager.ActivityService.AnyAsync(id))
+            {
+                return NotFound($"There is no activity with id: {id}");
+            }
+
+            var changedActivity = await _serviceManager.ActivityService.PutAsync(id, dto);
+
+            return Ok(changedActivity);
+        }
+
         [HttpDelete("{id}")]
         public async Task<ActionResult> DeleteActivityAsync(int id)
         {

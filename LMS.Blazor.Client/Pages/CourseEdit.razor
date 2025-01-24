@@ -74,7 +74,8 @@
                 if (_apiService != null)
                 {
                     // course = await _apiService.CallApiGetAsync<CourseDto>($"Course/{CourseId}");
-                    course = await _apiService.CallApiGetAsync<CourseDto>($"Course/{CourseId}");
+                    course = await _apiService.CallApiGetAsync<CourseDto>($"Course/{CourseId}?includeModules=true&includeDocuments=true");
+              
                     StateHasChanged();
                 }
                 else

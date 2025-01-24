@@ -2,6 +2,7 @@
 using Domain.Contracts;
 using Domain.Models.Entities;
 using LMS.Shared.DTOs.Activity;
+using LMS.Shared.DTOs.Activity;
 using Microsoft.AspNetCore.JsonPatch;
 using Services.Contracts;
 
@@ -16,6 +17,17 @@ namespace LMS.Services
         {
             this.uow = uow;
             this.mapper = mapper;
+        }
+
+        public async Task<ActivityDto> PutAsync(int id, ActivityUpdateDto dto)
+        {
+            Activity? activityToPut = await uow.ActivityRepository.FindByIdAsync(id) ?? throw new NullReferenceException("Activity not found");
+
+            mapper.Map(dto, activityToPut);
+
+            await uow.CompleteAsync();
+
+            return mapper.Map<ActivityDto>(activityToPut);
         }
 
         public async Task<bool> AnyAsync()

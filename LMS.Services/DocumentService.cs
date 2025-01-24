@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
 using Domain.Contracts;
 using Domain.Models.Entities;
-using LMS.Shared.DTOs.Course;
+using LMS.Shared.DTOs.Document;
 using LMS.Shared.DTOs.Document;
 using Microsoft.AspNetCore.JsonPatch;
 using Services.Contracts;
@@ -22,6 +22,17 @@ namespace LMS.Services
         {
             this.uow = uow;
             this.mapper = mapper;
+        }
+
+        public async Task<DocumentDto> PutAsync(int id, DocumentUpdateDto dto)
+        {
+            Document? documentToPut = await uow.DocumentRepository.FindByIdAsync(id) ?? throw new NullReferenceException("Document not found");
+
+            mapper.Map(dto, documentToPut);
+
+            await uow.CompleteAsync();
+
+            return mapper.Map<DocumentDto>(documentToPut);
         }
 
         public async Task<bool> AnyAsync()

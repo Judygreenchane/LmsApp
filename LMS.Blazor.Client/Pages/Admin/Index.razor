@@ -1,0 +1,9 @@
+﻿@page "/admin"
+
+@using Microsoft.AspNetCore.Components.Authorization
+
+<div class="welcome-container p-4">
+    <AuthorizeView>
+        <h4 class="text-danger">Welcome, @context.User.Identity?.Name!</h4>
+    </AuthorizeView>
+</div>

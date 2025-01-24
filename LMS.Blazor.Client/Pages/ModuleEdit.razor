@@ -1,0 +1,96 @@
+﻿@page "/moduleedit/{ModuleId:int}"
+@rendermode InteractiveWebAssembly
+
+@using LMS.Blazor.Client.Services
+@using LMS.Shared.DTOs
+@using LMS.Shared.DTOs.Course
+@using LMS.Shared.DTOs.Module
+
+@if (module == null)
+{
+    <p>Loading...</p>
+}
+else
+{
+
+
+    <h3>Edit Module: @module.Name</h3>
+    
+
+    <EditForm Model="moduleForUpdate">
+
+        <DataAnnotationsValidator />
+        <div>
+            <label for="name">Name</label>
+            <InputText @bind-Value="moduleForUpdate.Name" id="name" />
+        </div>
+        <div>
+            <label for="Description">Description</label>
+            <InputTextArea @bind-Value="moduleForUpdate.Description" id="description" />
+        </div>
+        <div>
+            <label for="StartDate">Start with data</label>
+            <InputDate @bind-Value="moduleForUpdate.StartDate" id="StartDate"  />
+        </div>
+        <div>
+            <label for="StartDate">Start with data</label>
+            <InputDate @bind-Value="moduleForUpdate.EndDate" id="StartDate" />
+        </div>
+        <button type="submit" @onclick="PutModule">Add Modulet</button>
+
+
+        <ValidationSummary />
+    </EditForm>
+}
+
+@code {
+    [Parameter]
+    public int ModuleId { get; set; }
+    [Inject]
+    private IApiService _apiService { get; set; } = default!;
+
+    // private AuthenticationStateProvider AuthenticationStateProvider { get; set; } = default!;
+
+    private ModuleDto? module = null;
+    private ModuleUpdateDto? moduleForUpdate = new ModuleUpdateDto();
+
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            try
+            {
+                if (_apiService != null)
+                {
+                    module = await _apiService.CallApiGetAsync<ModuleDto>("module/1?includeActivities=true&includeDocuments=true");
+                    moduleForUpdate = new ModuleUpdateDto
+                    {
+                        Name = module.Name,
+                        Description = module.Description,
+                        StartDate = module.StartDate,
+                        EndDate = module.EndDate
+                    };
+                    StateHasChanged();
+                }
+                else
+                {
+                    Console.WriteLine("ApiService is not initialized.");
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error while fetching module: {ex.Message}");
+            }
+        }
+    }
+
+    private void PutModule()
+    {
+        Console.WriteLine("Added");
+    }
+    
+
+}
+
+
