@@ -1,0 +1,95 @@
+﻿@page "/modulelist"
+@rendermode InteractiveWebAssembly
+
+@using LMS.Blazor.Client.Services
+@using LMS.Shared.DTOs
+@using LMS.Shared.DTOs.Course
+@using LMS.Shared.DTOs.Module
+<h3>ModuleList</h3>
+
+@if (modules == null)
+{
+    <p>Loading....</p>
+}
+else
+{
+    <div class="box">
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Module</th>
+                    <th>Description</th>
+                    <th>Course name</th>
+                    <th>Activities</th>
+                    <th>Start Date</th>
+                    <th>End Date</th>
+                    <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in modules)
+            {
+                <tr>
+                    <td>@item.Name</td>
+                        <td>@item.Description</td>
+                        <td>@item.Course.Name</td>
+                        <td>@item.Activities.Count</td>
+                        <td>@item.StartDate.ToString("yyyy-MM-dd")</td>
+                        <td>@item.EndDate.ToString("yyyy-MM-dd")</td>
+                        <td><a href=@($"moduleedit/{item.Id}")>Details</a></td>
+                       @*  <td><a href=@($"moduleoverview/{item.ModuleId}")>Details</a></td> *@
+                             
+                </tr>
+            }
+        </tbody>
+    </table>
+
+        
+    </div>
+}
+<style>
+    .box {
+        width: 100%;
+       
+        background: white;
+        padding: 2.5rem;
+        border-radius: 16px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+    }
+</style>
+@code {
+
+    [Inject]
+    private IApiService _apiService { get; set; } = default!;
+
+    // private AuthenticationStateProvider AuthenticationStateProvider { get; set; } = default!;
+
+    private List<ModuleDto>? modules;
+
+
+    protected async override Task OnAfterRenderAsync(bool firstRender)
+    {
+
+        if (firstRender)
+        {
+            try
+            {
+                if (_apiService != null)
+                {
+                    modules = (await _apiService.CallApiGetAsync<IEnumerable<ModuleDto>>("module/?includeActivities=true&includeDocuments=true"))?.ToList() ?? [];
+                    StateHasChanged(); // Trigger UI update after fetching data
+                }
+                else
+                {
+                    Console.WriteLine("ApiService is not initialized");
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error while fetching modules: {ex.Message}");
+            }
+        }
+
+
+    }
+}

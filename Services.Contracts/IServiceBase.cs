@@ -16,6 +16,7 @@ namespace Services.Contracts
         Task<bool> AnyAsync(int Id);
         Task<TDto> CreateAsync(TCreateDto dto);
         Task<TDto> UpdateAsync(int id, JsonPatchDocument<TUpdateDto> patchDocument);
+        Task<TDto> PutAsync(int id, TUpdateDto dto);
         Task DeleteAsync(int id);
     }
 }

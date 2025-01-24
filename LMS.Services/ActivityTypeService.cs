@@ -2,6 +2,7 @@
 using Domain.Contracts;
 using Domain.Models.Entities;
 using LMS.Shared.DTOs.ActivityType;
+using LMS.Shared.DTOs.ActivityType;
 using LMS.Shared.DTOs.Document;
 using Microsoft.AspNetCore.JsonPatch;
 using Services.Contracts;
@@ -19,6 +20,16 @@ namespace LMS.Services
             this.mapper = mapper;
         }
 
+        public async Task<ActivityTypeDto> PutAsync(int id, ActivityTypeUpdateDto dto)
+        {
+            ActivityType? activityTypeToPut = await uow.ActivityTypeRepository.FindByIdAsync(id) ?? throw new NullReferenceException("ActivityType not found");
+
+            mapper.Map(dto, activityTypeToPut);
+
+            await uow.CompleteAsync();
+
+            return mapper.Map<ActivityTypeDto>(activityTypeToPut);
+        }
         public async Task<bool> AnyAsync()
         {
             return await uow.ActivityTypeRepository.AnyAsync();

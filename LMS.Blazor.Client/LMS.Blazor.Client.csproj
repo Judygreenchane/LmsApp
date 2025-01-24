@@ -10,6 +10,7 @@
 
   <ItemGroup>
     <PackageReference Include="Blazored.LocalStorage" Version="4.5.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.Forms" Version="8.0.12" />
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="8.0.2" />
     <PackageReference Include="microsoft.aspnetcore.components.webassembly.authentication" Version="8.0.6" />
     <PackageReference Include="Microsoft.Extensions.Http" Version="8.0.1" />
@@ -23,6 +24,12 @@
   <ItemGroup>
     <Folder Include="Components\" />
     <Folder Include="Pages\student\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Update="Pages\ModuleList.razor">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+    </Content>
   </ItemGroup>
 
 </Project>
