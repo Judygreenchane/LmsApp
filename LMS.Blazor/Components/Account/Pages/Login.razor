@@ -232,7 +232,20 @@
         if (result.Succeeded)
         {
             Logger.LogInformation("User logged in.");
-            RedirectManager.RedirectTo(ReturnUrl);
+
+            // Get user and their roles
+            var user = await UserManager.FindByEmailAsync(Input.Email);
+            var roles = await UserManager.GetRolesAsync(user);
+
+            // Redirect based on role
+            if (roles.Contains("Admin"))
+                NavigationManager.NavigateTo("/admin");
+            else if (roles.Contains("Teacher"))
+                NavigationManager.NavigateTo("/teacher");
+            else if (roles.Contains("Student"))
+                NavigationManager.NavigateTo("/student");
+            else
+                RedirectManager.RedirectTo(ReturnUrl);
         }
         else if (result.RequiresTwoFactor)
         {
