@@ -23,14 +23,14 @@ namespace LMS.Presemtation.Controllers
             _serviceManager = serviceManager;
         }
         [HttpGet("{id}")]
-        public async Task<ActionResult<CourseDto>> GetOneCourse([FromBody] int id, bool includeModules = false, bool includeDocuments = false, bool trackChanges = false)
+        public async Task<ActionResult<CourseDto>> GetOneCourse( int id, bool includeModules = false, bool includeDocuments = false, bool trackChanges = false)
         {
             if (!await _serviceManager.CourseService.AnyAsync(id))
             {
                 return NotFound($"There is no course with id: {id}");
             }
 
-            var courseDto = await _serviceManager.CourseService.FindByIdAsync(id, includeModules, includeDocuments, trackChanges);
+            var courseDto = await _serviceManager.CourseService.FindByIdAsync(id,true,includeDocuments, trackChanges);
             return Ok(courseDto);
         }
         [HttpGet()]
