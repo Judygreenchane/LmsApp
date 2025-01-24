@@ -29,14 +29,14 @@ else
             <InputTextArea @bind-Value="moduleForUpdate.Description" id="description" />
         </div>
         <div>
-            <label for="StartDate">Start with data</label>
+            <label for="StartDate">Start Date</label>
             <InputDate @bind-Value="moduleForUpdate.StartDate" id="StartDate"  />
         </div>
         <div>
-            <label for="StartDate">Start with data</label>
+            <label for="StartDate">End Date</label>
             <InputDate @bind-Value="moduleForUpdate.EndDate" id="StartDate" />
         </div>
-        <button type="submit" @onclick="PutModule">Add Modulet</button>
+        <button type="submit" @onclick="PutModule">Edit Module</button>
 
 
         <ValidationSummary />

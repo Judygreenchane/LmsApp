@@ -207,7 +207,7 @@ namespace LMS.Infrastructure.Data
             var modules = faker.Generate(nrOfModules);
             string[] moduleNames = ["C# Basics", "Visual Studio", ".NET basics", "Debugging", "API"];
 
-            int avarageSpan = ((int)((courseStart - courseEnd) / nrOfModules).TotalDays);
+            int avarageSpan = ((int)((courseEnd - courseStart) / nrOfModules).TotalDays);
 
             for (int i = 0; i < nrOfModules; i++)
             {
@@ -234,7 +234,7 @@ namespace LMS.Infrastructure.Data
 
             var activities = faker.Generate(nrOfActivities);
 
-            int avarageSpan = ((int)((moduleStart - moduleEnd) / nrOfActivities).TotalDays);
+            int avarageSpan = ((int)((moduleEnd -  moduleStart) / nrOfActivities).TotalDays);
 
             for (int i = 0; i < nrOfActivities; i++)
             {
