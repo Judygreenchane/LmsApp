@@ -24,6 +24,7 @@
   <ItemGroup>
     <Folder Include="Components\" />
     <Folder Include="Pages\student\" />
+    <Folder Include="Pages\student\" />
   </ItemGroup>
 
   <ItemGroup>

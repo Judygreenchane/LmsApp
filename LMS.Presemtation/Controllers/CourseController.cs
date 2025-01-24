@@ -23,6 +23,9 @@ namespace LMS.Presemtation.Controllers
             _serviceManager = serviceManager;
         }
         [HttpGet("{id}")]
+
+
+  
         public async Task<ActionResult<CourseDto>> GetOneCourse( int id, bool includeModules = false, bool includeDocuments = false, bool trackChanges = false)
         {
             if (!await _serviceManager.CourseService.AnyAsync(id))
@@ -30,17 +33,20 @@ namespace LMS.Presemtation.Controllers
                 return NotFound($"There is no course with id: {id}");
             }
 
+
             var courseDto = await _serviceManager.CourseService.FindByIdAsync(id, includeModules, includeDocuments, trackChanges);
+
+
             return Ok(courseDto);
         }
         [HttpGet()]
-        public async Task<ActionResult<IEnumerable<CourseDto>>> GetAllCourses(bool includeCourses = false, bool includeDocuments = false, bool trackChanges = false)
+        public async Task<ActionResult<IEnumerable<CourseDto>>> GetAllCourses(bool includeModules = false, bool includeDocuments = false, bool trackChanges = false)
         {
             if (!await _serviceManager.CourseService.AnyAsync())
             {
                 return NotFound($"There is no courses");
             }
-            var courseDtos = _serviceManager.CourseService.FindAll(includeCourses, includeDocuments, trackChanges); //ToDo: Fix Call
+            var courseDtos = _serviceManager.CourseService.FindAll(includeModules, includeDocuments, trackChanges); //ToDo: Fix Call
             return Ok(courseDtos);
         }
         [HttpPost()]
