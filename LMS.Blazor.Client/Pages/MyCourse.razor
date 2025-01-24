@@ -1,4 +1,4 @@
-﻿@page "/student/MyCourse"
+﻿@page "/MyCourse"
 @rendermode InteractiveWebAssembly
 
 @using LMS.Blazor.Client.Services
@@ -10,14 +10,17 @@
 
 @if (course != null)
 {
-    <h3>Course : @course.Name</h3>
+    <h3>Course  @course.Name</h3>
 @foreach (var module in course.Modules)
 {
+    <div class="box">
     <table class="table">
         <thead>
             <tr>
                 <th>@module.Name</th>
                 <th></th>
+                 <th></th>
+                    <th></th>
 
             </tr>
         </thead>
@@ -34,8 +37,18 @@
 
         </tbody>
     </table>
+        </div>
 }
 }
+<style>
+    .box {
+        width: 100%;
+        background: white;
+        padding: 2.5rem;
+        border-radius: 16px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+    }
+</style>
 @code {
 
     [Inject]

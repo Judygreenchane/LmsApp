@@ -65,8 +65,8 @@
                 @if (context.User.IsInRole("Teacher"))
                 {
                     <div class="nav-item px-2">
-                        <NavLink class="nav-link" href="teacher/courses">
-                            <span class="bi bi-journal-text-nav-menu" aria-hidden="true"></span> My Courses
+                        <NavLink class="nav-link" href="MyCourse">
+                            <span class="bi bi-journal-text-nav-menu" aria-hidden="true"></span> My Course
                         </NavLink>
                     </div>
                     <div class="nav-item px-2">
@@ -89,7 +89,7 @@
                 @if (context.User.IsInRole("Student"))
                 {
                     <div class="nav-item px-2">
-                        <NavLink class="nav-link" href="student/MyCourse">
+                        <NavLink class="nav-link" href="MyCourse">
                             <span class="bi bi-journal-nav-menu" aria-hidden="true"></span> My Course
                         </NavLink>
                     </div>
