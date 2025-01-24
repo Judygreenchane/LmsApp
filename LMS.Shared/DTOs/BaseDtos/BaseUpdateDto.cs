@@ -10,6 +10,6 @@ namespace LMS.Shared.DTOs.BaseDtos
     public abstract record BaseUpdateDto 
     {
         [Required]
-        public string Name { get; init; }
+        public string Name { get; set; }
     }
 }

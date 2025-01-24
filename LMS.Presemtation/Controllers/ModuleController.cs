@@ -64,6 +64,23 @@ namespace LMS.Presemtation.Controllers
 
             return Ok(changedModule);
         }
+        [HttpPut("{id}")]
+        public async Task<ActionResult> PutModuleAsync(int id, ModuleUpdateDto dto)
+        {
+            if (dto == null)
+            {
+                return BadRequest("No Input found");
+            }
+
+            if (!await _serviceManager.ModuleService.AnyAsync(id))
+            {
+                return NotFound($"There is no module with id: {id}");
+            }
+
+            var changedModule = await _serviceManager.ModuleService.PutAsync(id, dto);
+
+            return Ok(changedModule);
+        }
         [HttpDelete("{id}")]
         public async Task<ActionResult> DeleteModuleAsync(int id)
         {

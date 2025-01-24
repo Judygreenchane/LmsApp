@@ -26,7 +26,7 @@ namespace LMS.Presemtation.Controllers
         {
             if (!await _serviceManager.ActivityTypeService.AnyAsync(id))
             {
-                return NotFound($"There is no module with id: {id}");
+                return NotFound($"There is no activityType with id: {id}");
             }
             var courseDto = await _serviceManager.ActivityTypeService.FindByIdAsync(id, includeActivities);
             return Ok(courseDto);
@@ -36,7 +36,7 @@ namespace LMS.Presemtation.Controllers
         {
             if (!await _serviceManager.ActivityTypeService.AnyAsync())
             {
-                return NotFound($"There are no modules");
+                return NotFound($"There are no activityTypes");
             }
             var courseDtos = _serviceManager.ActivityTypeService.FindAll(includeActivities);
             return Ok(courseDtos);
@@ -57,13 +57,32 @@ namespace LMS.Presemtation.Controllers
 
             if (!await _serviceManager.ActivityTypeService.AnyAsync(id))
             {
-                return NotFound($"There is no module with id: {id}");
+                return NotFound($"There is no activityType with id: {id}");
             }
 
             var changedActivityType = await _serviceManager.ActivityTypeService.UpdateAsync(id, patchDocument);
 
             return Ok(changedActivityType);
         }
+
+        [HttpPut("{id}")]
+        public async Task<ActionResult> PutActivityTypeAsync(int id, ActivityTypeUpdateDto dto)
+        {
+            if (dto == null)
+            {
+                return BadRequest("No Input found");
+            }
+
+            if (!await _serviceManager.ActivityTypeService.AnyAsync(id))
+            {
+                return NotFound($"There is no activityType with id: {id}");
+            }
+
+            var changedActivityType = await _serviceManager.ActivityTypeService.PutAsync(id, dto);
+
+            return Ok(changedActivityType);
+        }
+
         [HttpDelete("{id}")]
         public async Task<ActionResult> DeleteActivityTypeAsync(int id)
         {

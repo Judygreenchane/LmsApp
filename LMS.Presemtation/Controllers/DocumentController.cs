@@ -64,6 +64,25 @@ namespace LMS.Presemtation.Controllers
 
             return Ok(changedDocument);
         }
+
+        [HttpPut("{id}")]
+        public async Task<ActionResult> PutDocumentAsync(int id, DocumentUpdateDto dto)
+        {
+            if (dto == null)
+            {
+                return BadRequest("No Input found");
+            }
+
+            if (!await _serviceManager.DocumentService.AnyAsync(id))
+            {
+                return NotFound($"There is no document with id: {id}");
+            }
+
+            var changedDocument = await _serviceManager.DocumentService.PutAsync(id, dto);
+
+            return Ok(changedDocument);
+        }
+
         [HttpDelete("{id}")]
         public async Task<ActionResult> DeleteDocumentAsync(int id)
         {
