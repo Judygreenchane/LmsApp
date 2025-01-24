@@ -22,24 +22,24 @@ namespace LMS.Presemtation.Controllers
             _serviceManager = serviceManager;
         }
         [HttpGet("{id}")]
-        public async Task<ActionResult<CourseDto>> GetOneCourse(int id, bool includeModules = false, bool includeDocuments = false, bool trackChanges = false)
+        public async Task<ActionResult<CourseDto>> GetOneCourse(int id, bool includeCourses = false, bool includeDocuments = false, bool trackChanges = false)
         {
             if (!await _serviceManager.CourseService.AnyAsync(id))
             {
                 return NotFound($"There is no course with id: {id}");
             }
 
-            var courseDto = await _serviceManager.CourseService.FindByIdAsync(id, includeModules, includeDocuments, trackChanges);
+            var courseDto = await _serviceManager.CourseService.FindByIdAsync(id, includeCourses, includeDocuments, trackChanges);
             return Ok(courseDto);
         }
         [HttpGet()]
-        public async Task<ActionResult<IEnumerable<CourseDto>>> GetAllCourses(bool includeModules = false, bool includeDocuments = false, bool trackChanges = false)
+        public async Task<ActionResult<IEnumerable<CourseDto>>> GetAllCourses(bool includeCourses = false, bool includeDocuments = false, bool trackChanges = false)
         {
             if (!await _serviceManager.CourseService.AnyAsync())
             {
                 return NotFound($"There is no courses");
             }
-            var courseDtos = _serviceManager.CourseService.FindAll(includeModules, includeDocuments, trackChanges); //ToDo: Fix Call
+            var courseDtos = _serviceManager.CourseService.FindAll(includeCourses, includeDocuments, trackChanges); //ToDo: Fix Call
             return Ok(courseDtos);
         }
         [HttpPost()]
@@ -62,6 +62,25 @@ namespace LMS.Presemtation.Controllers
 
             return Ok(changedCourse);
         }
+
+        [HttpPut("{id}")]
+        public async Task<ActionResult> PutCourseAsync(int id, CourseUpdateDto dto)
+        {
+            if (dto == null)
+            {
+                return BadRequest("No Input found");
+            }
+
+            if (!await _serviceManager.CourseService.AnyAsync(id))
+            {
+                return NotFound($"There is no course with id: {id}");
+            }
+
+            var changedCourse = await _serviceManager.CourseService.PutAsync(id, dto);
+
+            return Ok(changedCourse);
+        }
+
         [HttpDelete("{id}")]
         public async Task<ActionResult> DeleteCourse(int id)
         {

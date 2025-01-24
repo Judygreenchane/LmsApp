@@ -3,6 +3,7 @@ using Domain.Contracts;
 using Domain.Models.Entities;
 using LMS.Shared.DTOs.Course;
 using LMS.Shared.DTOs.Course;
+using LMS.Shared.DTOs.Course;
 using Microsoft.AspNetCore.JsonPatch;
 using Services.Contracts;
 using System;
@@ -53,9 +54,9 @@ namespace LMS.Services
             await uow.CompleteAsync();
         }
 
-        public IEnumerable<CourseDto> FindAll(bool includemodules = false, bool includeDocuments = false, bool trackChanges = false)
+        public IEnumerable<CourseDto> FindAll(bool includecourses = false, bool includeDocuments = false, bool trackChanges = false)
         {
-            var courses = uow.CourseRepository.FindAll(includemodules, includeDocuments, trackChanges);
+            var courses = uow.CourseRepository.FindAll(includecourses, includeDocuments, trackChanges);
             return mapper.Map<IEnumerable<CourseDto>>(courses);
         }
 
@@ -66,9 +67,9 @@ namespace LMS.Services
                 ? throw new KeyNotFoundException($"course with id: {Id} not found") : mapper.Map<CourseDto>(course);
         }
 
-        public async Task<CourseDto> FindByIdAsync(int Id, bool includemodules = false, bool includeDocuments = false, bool trackChanges = false)
+        public async Task<CourseDto> FindByIdAsync(int Id, bool includecourses = false, bool includeDocuments = false, bool trackChanges = false)
         {
-            Course? course = await uow.CourseRepository.FindByIdAsync(Id, includemodules, includeDocuments, trackChanges);
+            Course? course = await uow.CourseRepository.FindByIdAsync(Id, includecourses, includeDocuments, trackChanges);
             return course == null
                 ? throw new KeyNotFoundException($"course with id: {Id} not found") : mapper.Map<CourseDto>(course);
         }
@@ -86,5 +87,15 @@ namespace LMS.Services
             return mapper.Map<CourseDto>(courseToPatch);
         }
 
+        public async Task<CourseDto> PutAsync(int id, CourseUpdateDto dto)
+        {
+            Course? courseToPut = await uow.CourseRepository.FindByIdAsync(id) ?? throw new NullReferenceException("Course not found");
+
+            mapper.Map(dto, courseToPut);
+
+            await uow.CompleteAsync();
+
+            return mapper.Map<CourseDto>(courseToPut);
+        }
     }
 }

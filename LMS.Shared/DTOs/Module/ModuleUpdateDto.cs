@@ -11,12 +11,12 @@ namespace LMS.Shared.DTOs.Module
     public record ModuleUpdateDto : BaseUpdateDto
     {
         [Required]
-        public string Description { get; init; }
+        public string Description { get; set; }
 
         [Required]
-        public DateTime StartDate { get; init; }
+        public DateTime StartDate { get; set; }
 
         [Required]
-        public DateTime EndDate { get; init; }
+        public DateTime EndDate { get; set; }
     }
 }
