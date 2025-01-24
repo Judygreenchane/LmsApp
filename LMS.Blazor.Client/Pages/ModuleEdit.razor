@@ -15,7 +15,7 @@ else
 
 
     <h3>Edit Module: @module.Name</h3>
-    
+
 
     <EditForm Model="moduleForUpdate">
 
@@ -63,7 +63,7 @@ else
             {
                 if (_apiService != null)
                 {
-                    module = await _apiService.CallApiGetAsync<ModuleDto>("module/1?includeActivities=true&includeDocuments=true");
+                    module = await _apiService.CallApiGetAsync<ModuleDto>($"module/{ModuleId}?includeActivities=true&includeDocuments=true");
                     moduleForUpdate = new ModuleUpdateDto
                     {
                         Name = module.Name,
@@ -85,9 +85,26 @@ else
         }
     }
 
-    private void PutModule()
+    private async Task PutModule()
     {
-        Console.WriteLine("Added");
+        try
+        {
+            if (_apiService != null)
+            {
+                if (moduleForUpdate == null) throw new NullReferenceException();
+                var result = await _apiService.CallApiPutAsync<ModuleUpdateDto>($"module/{ModuleId}", moduleForUpdate);
+
+                StateHasChanged();
+            }
+            else
+            {
+                Console.WriteLine("ApiService is not initialized.");
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error while fetching module: {ex.Message}");
+        }
     }
     
 

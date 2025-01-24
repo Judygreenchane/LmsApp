@@ -7,4 +7,5 @@ public interface IApiService
 {
 
     Task<TResponse?> CallApiGetAsync<TResponse>(string endpoint);
+    Task<T> CallApiPutAsync<T>(string endpoint, T data);
 }
