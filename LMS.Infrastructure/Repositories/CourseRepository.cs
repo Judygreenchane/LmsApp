@@ -16,6 +16,17 @@ namespace LMS.Infrastructure.Repositories
         public CourseRepository(LmsContext context) : base(context)
         {
         }
+        public async Task<Course?> GetCourseByUserIdAsync(string userId, bool trackChanges = false)
+        {
+            return await
+                FindByCondition(c => c.Users.Any(u => u.Id == userId), trackChanges)
+                .Include(c => c.Modules)
+                .ThenInclude(m => m.Activities)
+                .ThenInclude(a => a.ActivityType)
+                .Include(c => c.Users)
+                .FirstOrDefaultAsync();
+
+        }
         public IQueryable<Course> FindAll(bool includeModules = false, bool includeDocuments = false, bool trackChanges = false)
         {
             if (includeModules && includeDocuments) return base.FindAll(trackChanges)

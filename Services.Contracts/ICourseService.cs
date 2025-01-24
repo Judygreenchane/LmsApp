@@ -5,5 +5,6 @@ namespace Services.Contracts
 {
     public interface ICourseService : IServiceWithCollection<CourseDto, CourseCreateDto, CourseUpdateDto>
     {
+        Task<CourseDto> GetCourseByUserIdAsync(string userId);
     }
 }
