@@ -41,7 +41,8 @@
     
       private async Task displayModuleAsync()
       {
-        course = await _apiService.CallApiGetAsync<CourseDto>($"Course/{CourseId}");
+        course = await _apiService.CallApiGetAsync<CourseDto>($"Course/{CourseId}?includeModules=true");
+   // https://localhost:7044/api/course/5?includeModules=true
       }
     
 
