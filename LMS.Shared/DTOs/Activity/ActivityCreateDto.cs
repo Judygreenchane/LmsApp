@@ -1,5 +1,6 @@
 ﻿using LMS.Shared.DTOs.ActivityType;
 using LMS.Shared.DTOs.BaseDtos;
+using LMS.Shared.DTOs.Document;
 using LMS.Shared.DTOs.Module;
 using System;
 using System.Collections.Generic;
@@ -20,7 +21,9 @@ namespace LMS.Shared.DTOs.Activity
 
         [Required]
         public DateTime EndTime { get; init; }
-        public ActivityTypeDto ActivityType { get; set; }
-        public ModuleDto Module { get; set; }
+        [Required]
+        public int ActivityTypeId { get; set; }
+        public int? ModuleId { get; set; }
+        public List<DocumentInCollectionDto>? Documents { get; init; }
     }
 }

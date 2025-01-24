@@ -58,11 +58,6 @@ namespace LMS.Presemtation.Controllers
 
             if (patchDocument is null) return BadRequest();
 
-            var courseToPatch = new CourseUpdateDto();
-            patchDocument.ApplyTo(courseToPatch, ModelState);
-
-            if (!ModelState.IsValid) return UnprocessableEntity(ModelState);
-
             var changedCourse = await _serviceManager.CourseService.UpdateAsync(id, patchDocument);
 
             return Ok(changedCourse);
