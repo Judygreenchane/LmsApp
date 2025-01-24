@@ -14,15 +14,11 @@
 <div class="nav-scrollable" onclick="document.querySelector('.navbar-toggler').click()">
     <nav class="flex-column">
         <div class="nav-item px-2">
-            <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
+            <NavLink class="nav-link" href="account/login" Match="NavLinkMatch.All">
                 <span class="bi bi-house-door-fill-nav-menu" aria-hidden="true"></span> Home
             </NavLink>
         </div>
-        <div class="nav-item px-2">
-            <NavLink class="nav-link" href="createcourse" Match="NavLinkMatch.All">
-                <span class="i bi-person-badge-nav-menu" aria-hidden="true"></span> Course
-            </NavLink>
-        </div>
+        
        
 
         <AuthorizeView>
@@ -91,7 +87,7 @@
                 @if (context.User.IsInRole("Student"))
                 {
                     <div class="nav-item px-2">
-                        <NavLink class="nav-link" href="student/mycourse">
+                        <NavLink class="nav-link" href="student/MyCourse">
                             <span class="bi bi-journal-nav-menu" aria-hidden="true"></span> My Course
                         </NavLink>
                     </div>
